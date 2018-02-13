@@ -20,9 +20,9 @@ app$readConfig()
 ## access the supplied value of 'myParameter'
 user<-app$getParameters()$`user`
 pwd<-app$getParameters()$`#password`
-ulr<-app$getParameters()$`url`
 from<-app$getParameters()$`from`
 
+url<-"https://digitalengines.daktela.com"
 
 ## Endpoints
 endpointTemplate<-list(
