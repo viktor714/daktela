@@ -8,7 +8,6 @@ library(purrr, warn.conflicts=FALSE, quietly = TRUE)
 library(readr, warn.conflicts=FALSE, quietly = TRUE)
 library(doParallel, warn.conflicts=FALSE, quietly = TRUE)
 
-#=======BASIC INFO ABOUT THE SmartSupp EXTRACTOR========#
 
 
 #=======CONFIGURATION========#
@@ -20,8 +19,8 @@ app$readConfig()
 
 ## access the supplied value of 'myParameter'
 user<-app$getParameters()$`user`
-pwd<-app$getParameters()$`#pwd`
-ulr<-app$getParameters()$`ulr`
+pwd<-app$getParameters()$`#password`
+ulr<-app$getParameters()$`url`
 from<-app$getParameters()$`from`
 
 
