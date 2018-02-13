@@ -1,0 +1,18 @@
+language: bash
+
+services:
+  - docker
+
+script:
+  - docker build --tag=${APP_IMAGE} .
+
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: chmod +x ./deploy.sh && ./deploy.sh
+  on:
+    tags: true
+    all_branches: true
+    
+© 2018 GitHub, Inc.
+    
