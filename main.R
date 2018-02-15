@@ -18,9 +18,9 @@ app <- DockerApplication$new('/data/')
 app$readConfig()
 
 ## access the supplied value of 'myParameter'
-user<-app$getParameters()$`user`
-pwd<-app$getParameters()$`#password`
-from<-app$getParameters()$`fromDate`
+user<-app$getParameters()$user
+pwd<-app$getParameters()$'#password'
+from<-app$getParameters()$fromDate
 
 url<-"https://digitalengines.daktela.com"
 
