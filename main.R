@@ -106,5 +106,5 @@ index<-map(data,length)>0
 registerDoParallel(cores=detectCores()-1)
 
 foreach(i=which(index)) %dopar% {
-write.csv(data[i],paste0("/data/out/tables/",names(endpointList[i]),".csv"),row.names = FALSE)
+write.csv(data[i],paste0("/data/in/tables/",names(endpointList[i]),".csv"),row.names = FALSE)
                
