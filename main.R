@@ -23,10 +23,10 @@ suppressPackageStartupMessages(library(doParallel, quietly = TRUE))
 ## access the supplied value of 'myParameter'
 user<-app$getParameters()$user
 pwd<-app$getParameters()$'#pwd'
-url<-app$getParameters()$url
 from<-app$getParameters()$from
-short<-app$getParameters()$short
 
+url<-"https://digitalengines.daktela.com"
+short<-FALSE
 ##Catch config errors
 
 if(is.null(pwd) | is.null(user) | is.null(url) ) stop("invalid credentials or site URL")
