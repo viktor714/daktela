@@ -90,9 +90,10 @@ write_endpoint<-function(endpoint,token,from=NULL,short=FALSE,limit=1000,iterato
     
       res
     }
-  
-    write_csv(data,paste0("/data/out/tables/",endpoint[[3]],".csv"))
+    csvFilePath<-paste0("/data/out/tables/",endpoint[[3]],".csv")
+    write_csv(data,csvFilenPath)
     #Přidat manifest file
+    app$writeTableManifest(csvFilePath,destination='')
     
     #Writing a message to the console
     b<-Sys.time()
