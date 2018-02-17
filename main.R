@@ -91,7 +91,7 @@ write_endpoint<-function(endpoint,token,from=NULL,short=FALSE,limit=1000,iterato
       res
     }
     csvFilePath<-paste0("/data/out/tables/",endpoint[[3]],".csv")
-    write_csv(data,csvFilenPath)
+    write_csv(data,csvFilePath)
     #Přidat manifest file
     app$writeTableManifest(csvFilePath,destination='')
     
