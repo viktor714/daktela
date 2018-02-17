@@ -23,7 +23,7 @@ suppressPackageStartupMessages(library(doParallel, quietly = TRUE))
 ## access the supplied value of 'myParameter'
 user<-app$getParameters()$`user`
 pwd<-app$getParameters()$`#pwd`
-url<-app$getParameters()$`ulr`
+url<-app$getParameters()$`url`
 from<-app$getParameters()$`from`
 short<-app$getParameters()$`from`
 
