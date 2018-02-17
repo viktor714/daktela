@@ -25,7 +25,7 @@ user<-app$getParameters()$`user`
 pwd<-app$getParameters()$`#pwd`
 url<-app$getParameters()$`url`
 from<-app$getParameters()$`from`
-short<-app$getParameters()$`from`
+short<-app$getParameters()$`short`
 
 ##Catch config errors
 
