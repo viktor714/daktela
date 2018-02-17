@@ -18,7 +18,7 @@ suppressPackageStartupMessages(library(doParallel, quietly = TRUE))
  library('keboola.r.docker.application')
  app <- DockerApplication$new('/data/')
 
-# app$readConfig()
+app$readConfig()
 # 
 ## access the supplied value of 'myParameter'
 user<-app$getParameters()$user
