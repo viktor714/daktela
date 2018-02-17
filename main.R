@@ -21,11 +21,11 @@ suppressPackageStartupMessages(library(doParallel, quietly = TRUE))
 # app$readConfig()
 # 
 ## access the supplied value of 'myParameter'
-user<-app$getParameters()$`user`
-pwd<-app$getParameters()$`#pwd`
-url<-app$getParameters()$`url`
-from<-app$getParameters()$`from`
-short<-app$getParameters()$`short`
+user<-app$getParameters()$user
+pwd<-app$getParameters()$'#pwd'
+url<-app$getParameters()$url
+from<-app$getParameters()$from
+short<-app$getParameters()$short
 
 ##Catch config errors
 
