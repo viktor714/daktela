@@ -9,6 +9,7 @@ suppressPackageStartupMessages(library(jsonlite, quietly = TRUE))
 suppressPackageStartupMessages(library(purrr, quietly = TRUE))
 suppressPackageStartupMessages(library(readr, quietly = TRUE))
 suppressPackageStartupMessages(library(doParallel, quietly = TRUE))
+suppressPackageStartupMessages(library('keboola.r.docker.application', quietly = TRUE))
 
 #=======BASIC INFO ABOUT THE SmartSupp EXTRACTOR========#
 
@@ -37,7 +38,7 @@ token<-POST(paste0(url,"/api/v6/login.json"),body=list(password=pwd,username=use
   content("text",encoding = "UTF-8")%>%fromJSON(flatten=TRUE,simplifyDataFrame = TRUE)%>%.$result
 
 #This function paginates through an endpoint in parallel and writes the result to the out bucket
-
+sink("msgs")
 write_endpoint<-function(endpoint,token,from=NULL,short=FALSE,limit=1000,iterator=FALSE){
   
   #Writing a message to the console
@@ -101,7 +102,7 @@ write_endpoint<-function(endpoint,token,from=NULL,short=FALSE,limit=1000,iterato
     write(paste0(endpoint[[3]], " extraction finished at: ",Sys.time()) , stdout())
   }
 }
-
+sink(NULL)
 # Extraction of endpoints -------------------------------------------------
 
 ## Activities
