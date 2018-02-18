@@ -108,6 +108,8 @@ write_endpoint<-function(endpoint,token,from=NULL,short=FALSE,limit=1000,iterato
 activities<-list("/api/v6/activities.json","time","activities")
 write_endpoint(activities,token,from = from,short = short)
 
+remove(activities)
+
 ## ActivitiesCall
 activitiesCall<-list("/api/v6/activitiesCall.json","call_time","activitiesCall")
 
@@ -125,6 +127,8 @@ iterator_activitiesCall<-function(r){
 
 write_endpoint(activitiesCall,token,from = from,short = short,iterator = iterator_activitiesCall)
 
+remove(activitiesCall,iterator_activitiesCall)
+
 ## ActivitiesEmail
 activitiesEmail<-list("/api/v6/activitiesEmail.json","time","activitiesEmail")
 
@@ -137,6 +141,8 @@ iterator_activitiesEmail<-function(r){
 }
 
 write_endpoint(activitiesEmail,token,from = from,short = short,iterator = iterator_activitiesEmail)
+
+remove(activitiesEmail,iterator_activitiesEmail)
 
 ## ActivitiesChat
 activitiesChat<-list("/api/v6/activitiesChat.json","time","activitiesChat")
@@ -152,21 +158,31 @@ iterator_activitiesChat<-function(r){
 
 write_endpoint(activitiesChat,token,from = from,short = short,iterator = iterator_activitiesChat)
 
+remove(activitiesChat,iterator_activitiesChat)
+
 ## Accounts
 accounts<-list("/api/v6/accounts.json",FALSE,"accounts")
 write_endpoint(accounts,token,from = from,short = short,iterator = FALSE)
+
+remove(accounts)
 
 ## Groups
 groups<-list("/api/v6/groups.json",FALSE,"groups")
 write_endpoint(groups,token,from = from,short = short,iterator = FALSE)
 
+remove(groups)
+
 ## Pauses
 pauses<-list("/api/v6/pauses.json",FALSE,"pauses")
 write_endpoint(pauses,token,from = from,short = short,iterator = FALSE)
 
+remove(pauses)
+
 ## Queues
 queues<-list("/api/v6/queues.json",FALSE,"queues")
 write_endpoint(queues,token,from = from,short = short,iterator = FALSE)
+
+remove(queues)
 
 ## Statuses
 statuses<-list("/api/v6/statuses.json",FALSE,"statuses")
@@ -176,8 +192,10 @@ write_endpoint(statuses,token,from = from,short = short,iterator = FALSE)
 templates<-list("/api/v6/templates.json",FALSE,"templates")
 write_endpoint(templates,token,from = from,short = short,iterator = FALSE)
 
+remove(templates)
+
 ## Tickets
 tickets<-list("/api/v6/tickets.json","edited","tickets")
 write_endpoint(tickets,token,from = from,short = short,iterator = FALSE)
 
-           
+remove(tickets)           
