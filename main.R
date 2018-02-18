@@ -160,7 +160,6 @@ write_endpoint(activitiesChat,token,from = from,short = short,iterator = iterato
 
 
 remove(activitiesChat,iterator_activitiesChat)
-remove(activitiesEmail,iterator_activitiesEmail)
 
 ## Accounts
 accounts<-list("/api/v6/accounts.json",FALSE,"accounts")
