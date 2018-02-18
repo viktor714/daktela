@@ -16,7 +16,7 @@ suppressPackageStartupMessages(library('keboola.r.docker.application', quietly =
 
 #=======CONFIGURATION========#
 ## initialize application
-sink("msgs")
+
  library('keboola.r.docker.application')
  app <- DockerApplication$new('/data/')
 
@@ -83,13 +83,13 @@ write_endpoint<-function(endpoint,token,from=NULL,short=FALSE,iterator=FALSE){
         data<-r%>%fromJSON(flatten=TRUE,simplifyDataFrame = TRUE)%>%.$result%>%.$data%>%
           select(-contains("."))%>%.[,sapply(.,class)!="list"]%>%as_data_frame
       }
-    
     csvFilePath<-paste0("/data/out/tables/",endpoint[[3]],".csv")
     write_csv(data,csvFilePath)
     #Přidat manifest file
     app$writeTableManifest(csvFilePath,destination='')
-}
     sink(NULL)
+}
+
     #Writing a message to the console
     b<-Sys.time()
     write(paste0(nrow(data), " rows extracted out of ",total ," task duration: ",round(difftime(b,a,units="secs")%>%as.numeric,2)," s"), stdout())
