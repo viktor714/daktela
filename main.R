@@ -73,7 +73,7 @@ write_endpoint<-function(endpoint,token,from=NULL,short=FALSE,iterator=FALSE){
     write(paste0("Report ",endpoint[[3]], " is empty for selected criteria "), stdout())
   } else {
     
-      r<-GET(call,query=list(accessToken=token))%>%
+      r<-GET(call,query=list(accessToken=token,skip=0,take=1))%>%
         content("text",encoding = "UTF-8")
       if(is.function(iterator)) 
       { 
