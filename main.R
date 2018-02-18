@@ -17,10 +17,13 @@ suppressPackageStartupMessages(library('keboola.r.docker.application', quietly =
 #=======CONFIGURATION========#
 ## initialize application
 
+
+sink("msg")
  library('keboola.r.docker.application')
  app <- DockerApplication$new('/data/')
 
 app$readConfig()
+sink(NULL)
 # 
 ## access the supplied value of 'myParameter'
 user<-app$getParameters()$user
@@ -44,6 +47,7 @@ write_endpoint<-function(endpoint,token,from=NULL,short=FALSE,iterator=FALSE){
   #Writing a message to the console
   write(paste0(endpoint[[3]], " extraction started at: ",a<-Sys.time()) , stdout())
   
+  sink("msg")
   ## Looking wether the time filter is applied
   endpoint_url<-ifelse(is.null(from) | endpoint[[2]]==FALSE,
                        #FALSE - without filter
@@ -66,7 +70,6 @@ write_endpoint<-function(endpoint,token,from=NULL,short=FALSE,iterator=FALSE){
   total<-GET(call,query=list(accessToken=token,skip=0,take=1))%>%
     content("text",encoding = "UTF-8")%>%fromJSON(flatten=TRUE,simplifyDataFrame = FALSE)%>%.$result%>%.$total
  
-  sink("msg")
   #continue only if size of the list >0 
   if(total<1){ 
     write(paste0("Report ",endpoint[[3]], " is empty for selected criteria "), stdout())
@@ -88,14 +91,12 @@ write_endpoint<-function(endpoint,token,from=NULL,short=FALSE,iterator=FALSE){
     #Přidat manifest file
     app$writeTableManifest(csvFilePath,destination='')
     sink(NULL)
-}
-
     #Writing a message to the console
     b<-Sys.time()
     write(paste0(nrow(data), " rows extracted out of ",total ," task duration: ",round(difftime(b,a,units="secs")%>%as.numeric,2)," s"), stdout())
     write(paste0(endpoint[[3]], " extraction finished at: ",Sys.time()) , stdout())
   }
-
+}
 # Extraction of endpoints -------------------------------------------------
 
 ## Activities
