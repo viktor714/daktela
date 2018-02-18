@@ -34,13 +34,13 @@ short<-FALSE
 if(is.null(pwd) | is.null(user) | is.null(url) ) stop("invalid credentials or site URL")
 
 ## Retrieve token 
-
+sink("msg")
 token<-POST(paste0(url,"/api/v6/login.json"),body=list(password=pwd,username=user,only_token=1))%>%
   content("text",encoding = "UTF-8")%>%fromJSON(flatten=TRUE,simplifyDataFrame = TRUE)%>%.$result
 
-#This function paginates through an endpoint in parallel and writes the result to the out bucket
+#This function paginates through an endpoint and writes the result to the out bucket
 
-write_endpoint<-function(endpoint,token,from=NULL,short=FALSE,limit=1000,iterator=FALSE){
+write_endpoint<-function(endpoint,token,from=NULL,short=FALSE,iterator=FALSE){
   
   #Writing a message to the console
   write(paste0(endpoint[[3]], " extraction started at: ",a<-Sys.time()) , stdout())
@@ -69,41 +69,31 @@ write_endpoint<-function(endpoint,token,from=NULL,short=FALSE,limit=1000,iterato
   
   #continue only if size of the list >0 
   if(total<1){ 
-            write(paste0("Report ",endpoint[[3]], " is empty for selected criteria "), stdout())
+    write(paste0("Report ",endpoint[[3]], " is empty for selected criteria "), stdout())
   } else {
-  
-      #register cores on the machine for the parallel loop
-      registerDoParallel(cores=detectCores()-1)
-  
-      data<-foreach(i=seq(0,total,by = limit), .combine=bind_rows,.multicombine = TRUE,.errorhandling = "remove", .init=NULL) %dopar% {
     
-      r<-GET(call,query=list(accessToken=token,skip=i,take=limit))%>%
-      content("text",encoding = "UTF-8")
-      gc(reset=TRUE)
+      r<-GET(call,query=list(accessToken=token))%>%
+        content("text",encoding = "UTF-8")
       if(is.function(iterator)) 
       { 
-      write("processing DATA")
-      
-      res<-r%>%iterator%>%as_data_frame 
+        write("processing DATA")
+        
+        data<-r%>%iterator%>%as_data_frame 
       }else {
-      res<-r%>%fromJSON(flatten=TRUE,simplifyDataFrame = TRUE)%>%.$result%>%.$data%>%
-        select(-contains("."))%>%.[,sapply(.,class)!="list"]%>%as_data_frame
+        data<-r%>%fromJSON(flatten=TRUE,simplifyDataFrame = TRUE)%>%.$result%>%.$data%>%
+          select(-contains("."))%>%.[,sapply(.,class)!="list"]%>%as_data_frame
       }
     
-      res
-    }
-    gc(reset=TRUE)
     csvFilePath<-paste0("/data/out/tables/",endpoint[[3]],".csv")
     write_csv(data,csvFilePath)
     #Přidat manifest file
     app$writeTableManifest(csvFilePath,destination='')
-    
+}
     #Writing a message to the console
     b<-Sys.time()
     write(paste0(nrow(data), " rows extracted out of ",total ," task duration: ",round(difftime(b,a,units="secs")%>%as.numeric,2)," s"), stdout())
     write(paste0(endpoint[[3]], " extraction finished at: ",Sys.time()) , stdout())
   }
-}
 sink(NULL)
 # Extraction of endpoints -------------------------------------------------
 
@@ -127,38 +117,7 @@ iterator_activitiesCall<-function(r){
                   )
   out<-clean%>%bind_cols(df)
 }
-
-################################## TEST #############################################
-endpoint_url<-ifelse(is.null(from) | activitiesCall[[2]]==FALSE,
-                     #FALSE - without filter
-                     activitiesCall[[1]], 
-                     #TRUE - with time filter
-                     paste0(
-                       activitiesCall[[1]],
-                       "?filter[field]=",
-                       activitiesCall[[2]],
-                       "&filter[operator]=gte&filter[value]=",
-                       from
-                     ))
-
-call<-paste0(url,endpoint_url)
-
-r<-GET(call,query=list(accessToken=token))%>%
-  content("text",encoding = "UTF-8")
-  
-data<-r%>%iterator_activitiesCall%>%as_data_frame
-
-gc(reset=TRUE)
-sink("msgs")
-csvFilePath<-paste0("/data/out/tables/activitiesCall.csv")
-write_csv(data,csvFilePath)
-#Přidat manifest file
-app$writeTableManifest(csvFilePath,destination='')
-sink(NULL)
-write(paste0("ActivitiesCall extraction finished at: ",a<-Sys.time()) , stdout())
-#write_endpoint(activitiesCall,token,from = from,short = short,iterator = iterator_activitiesCall)
-########################################## TEST END ##########################################
-
+write_endpoint(activitiesCall,token,from = from,short = short,iterator = iterator_activitiesCall)
 remove(activitiesCall,iterator_activitiesCall)
 
 ## ActivitiesEmail
@@ -171,37 +130,7 @@ iterator_activitiesEmail<-function(r){
   )
   out<-clean%>%bind_cols(df)%>%select(-files)
 }
-
-################################## TEST #############################################
-endpoint_url<-ifelse(is.null(from) | activitiesEmail[[2]]==FALSE,
-                     #FALSE - without filter
-                     activitiesEmail[[1]], 
-                     #TRUE - with time filter
-                     paste0(
-                       activitiesEmail[[1]],
-                       "?filter[field]=",
-                       activitiesEmail[[2]],
-                       "&filter[operator]=gte&filter[value]=",
-                       from
-                     ))
-
-call<-paste0(url,endpoint_url)
-
-r<-GET(call,query=list(accessToken=token))%>%
-  content("text",encoding = "UTF-8")
-  
-data<-r%>%iterator_activitiesEmail%>%as_data_frame
-
-gc(reset=TRUE)
-sink("msgs")
-csvFilePath<-paste0("/data/out/tables/activitiesEmail.csv")
-write_csv(data,csvFilePath)
-#Přidat manifest file
-app$writeTableManifest(csvFilePath,destination='')
-sink(NULL)
-write(paste0("ActivitiesEmail extraction finished at: ",a<-Sys.time()) , stdout())
-#write_endpoint(activitiesEmail,token,from = from,short = short,iterator = iterator_activitiesEmail)
-########################################## TEST END ##########################################
+write_endpoint(activitiesEmail,token,from = from,short = short,iterator = iterator_activitiesEmail)
 remove(activitiesEmail,iterator_activitiesEmail)
 
 ## ActivitiesChat
@@ -215,39 +144,7 @@ iterator_activitiesChat<-function(r){
   )
   out<-clean%>%bind_cols(df)
 }
-################################## TEST #############################################
-endpoint_url<-ifelse(is.null(from) | activitiesChat[[2]]==FALSE,
-                     #FALSE - without filter
-                     activitiesChat[[1]], 
-                     #TRUE - with time filter
-                     paste0(
-                      activitiesChat[[1]],
-                       "?filter[field]=",
-                       activitiesChat[[2]],
-                       "&filter[operator]=gte&filter[value]=",
-                       from
-                     ))
-
-call<-paste0(url,endpoint_url)
-
-r<-GET(call,query=list(accessToken=token))%>%
-  content("text",encoding = "UTF-8")
-  
-data<-r%>%iterator_activitiesChat%>%as_data_frame
-
-gc(reset=TRUE)
-sink("msgs")
-csvFilePath<-paste0("/data/out/tables/activitiesChat.csv")
-write_csv(data,csvFilePath)
-#Přidat manifest file
-app$writeTableManifest(csvFilePath,destination='')
-sink(NULL)
-write(paste0("ActivitiesChat extraction finished at: ",a<-Sys.time()) , stdout())
-#write_endpoint(activitiesChat,token,from = from,short = short,iterator = iterator_activitiesChat)
-########################################## TEST END ##########################################
-
-#For the rest apply function write_endpoint
-
+write_endpoint(activitiesChat,token,from = from,short = short,iterator = iterator_activitiesChat)
 remove(activitiesChat,iterator_activitiesChat)
 
 ## Accounts
