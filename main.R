@@ -79,7 +79,7 @@ write_endpoint<-function(endpoint,token,from=NULL,short=FALSE,limit=1000,iterato
     
       r<-GET(call,query=list(accessToken=token,skip=i,take=limit))%>%
       content("text",encoding = "UTF-8")
-
+      gc(reset=TRUE)
       if(is.function(iterator)) 
       { 
       write("processing DATA")
@@ -92,6 +92,7 @@ write_endpoint<-function(endpoint,token,from=NULL,short=FALSE,limit=1000,iterato
     
       res
     }
+    gc(reset=TRUE)
     csvFilePath<-paste0("/data/out/tables/",endpoint[[3]],".csv")
     write_csv(data,csvFilePath)
     #Přidat manifest file
