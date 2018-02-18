@@ -18,12 +18,10 @@ suppressPackageStartupMessages(library('keboola.r.docker.application', quietly =
 ## initialize application
 
 
-sink("msg")
  library('keboola.r.docker.application')
  app <- DockerApplication$new('/data/')
 
 app$readConfig()
-sink(NULL)
 # 
 ## access the supplied value of 'myParameter'
 user<-app$getParameters()$user
@@ -47,7 +45,7 @@ write_endpoint<-function(endpoint,token,from=NULL,short=FALSE,iterator=FALSE){
   #Writing a message to the console
   write(paste0(endpoint[[3]], " extraction started at: ",a<-Sys.time()) , stdout())
   
-  sink("msg")
+
   ## Looking wether the time filter is applied
   endpoint_url<-ifelse(is.null(from) | endpoint[[2]]==FALSE,
                        #FALSE - without filter
@@ -90,7 +88,7 @@ write_endpoint<-function(endpoint,token,from=NULL,short=FALSE,iterator=FALSE){
     write_csv(data,csvFilePath)
     #Přidat manifest file
     app$writeTableManifest(csvFilePath,destination='')
-    sink(NULL)
+
     #Writing a message to the console
     b<-Sys.time()
     write(paste0(nrow(data), " rows extracted out of ",total ," task duration: ",round(difftime(b,a,units="secs")%>%as.numeric,2)," s"), stdout())
