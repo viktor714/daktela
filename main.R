@@ -128,7 +128,35 @@ iterator_activitiesCall<-function(r){
   out<-clean%>%bind_cols(df)
 }
 
-write_endpoint(activitiesCall,token,from = from,short = short,iterator = iterator_activitiesCall)
+################################## TEST #############################################
+endpoint_url<-ifelse(is.null(from) | activitiesCall[[2]]==FALSE,
+                     #FALSE - without filter
+                     activitiesCall[[1]], 
+                     #TRUE - with time filter
+                     paste0(
+                       activitiesCall[[1]],
+                       "?filter[field]=",
+                       activitiesCall[[2]],
+                       "&filter[operator]=gte&filter[value]=",
+                       from
+                     ))
+
+call<-paste0(url,endpoint_url)
+
+r<-GET(call,query=list(accessToken=token))%>%
+  content("text",encoding = "UTF-8")
+  
+data<-r%>%iterator_activitiesCall%>%as_data_frame
+
+gc(reset=TRUE)
+
+csvFilePath<-paste0("/data/out/tables/activitiesCall.csv")
+write_csv(data,csvFilePath)
+#Přidat manifest file
+app$writeTableManifest(csvFilePath,destination='')
+
+#write_endpoint(activitiesCall,token,from = from,short = short,iterator = iterator_activitiesCall)
+########################################## TEST END ##########################################
 
 remove(activitiesCall,iterator_activitiesCall)
 
