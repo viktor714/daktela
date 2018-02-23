@@ -1,3 +1,6 @@
+# Packages ---------------------------------------------------------------
+suppressPackageStartupMessages(package(ff, quietly = TRUE))
+
 # Libraries ---------------------------------------------------------------
 
 ## API calls with R
