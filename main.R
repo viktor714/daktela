@@ -1,3 +1,5 @@
+# sink - posílám hlášky z KBC do p*neznáma
+sink("mgs")
 # Packages ---------------------------------------------------------------
 suppressPackageStartupMessages(install.packages('ff'))
 
@@ -29,6 +31,9 @@ library('keboola.r.docker.application')
 app <- DockerApplication$new('/data/')
 
 app$readConfig()
+
+sink(NULL)
+
 ## Daktela username
 user<-app$getParameters()$user
 ## Daktela password
