@@ -15,7 +15,7 @@ suppressPackageStartupMessages(library(purrr, quietly = TRUE))
 ## Reading and writing CSV files and other formats (--ditch this if ff solves the problem)
 suppressPackageStartupMessages(library(readr, quietly = TRUE))
 ## Parallel multithreading processing
-#suppressPackageStartupMessages(library(parallel, quietly = TRUE))
+suppressPackageStartupMessages(library(parallel, quietly = TRUE))
 ## Big memory handling - saves objects to disk so it does not eat RAM
 suppressPackageStartupMessages(library(ff, quietly = TRUE))
 ## Operations with dates
@@ -34,7 +34,7 @@ user<-app$getParameters()$user
 ## Daktela password
 pwd<-app$getParameters()$'#pwd'
 ## Daktela server url
-url<-app$getParameters()url
+url<-app$getParameters()$url
 ## The date
 days_past<-app$getParameters()$from
 
