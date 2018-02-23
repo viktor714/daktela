@@ -1,5 +1,5 @@
 # Packages ---------------------------------------------------------------
-suppressPackageStartupMessages(package(ff, quietly = TRUE))
+suppressPackageStartupMessages(install.packages(ff, quietly = TRUE))
 
 # Libraries ---------------------------------------------------------------
 
