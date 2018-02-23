@@ -137,7 +137,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000,iterator=parse){
       #Use the parse function
       parse
     #If i = 0 then initialize the file else append the csv using fwrite from data.table in order to not waste RAM
-    fwrite(res,paste0("out/tables/",endpoint[[3]],".csv"),append = ifelse(i>0,TRUE,FALSE))%>%unlist%>%sum
+    fwrite(res,paste0("/data/out/tables/",endpoint[[3]],".csv"),append = ifelse(i>0,TRUE,FALSE))%>%unlist%>%sum
 
     nrow(res)
   })%>%unlist%>%as.numeric%>%sum()
@@ -153,7 +153,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000,iterator=parse){
     logfile_created<-file.exists("out/tables/out_log.csv")
 
     log<-data_frame("date"=Sys.time(),"endpoint"=endpoint[[3]],"exported_records"=total,"extraction_time"=time)
-    fwrite(log,"out/tables/out_log.csv",append=logfile_created)
+    fwrite(log,"/data/out/tables/out_log.csv",append=logfile_created)
   }
 
 
@@ -232,8 +232,4 @@ write_endpoint(templates,token,from = from,iterator = FALSE)
 tickets<-list("/api/v6/tickets.json","edited","tickets")
 write_endpoint(tickets,token,from = from,iterator = FALSE)
 
-### These endpoints are commented as they may contain personal info
-# contacts<-list("/api/v6/contacts.json","edited")
-# crmRecords<-list("/api/v6/crmRecords.json","edited")
-# campaignRecords<-list("/api/v6/campaignsRecords.json","edited")
-# users<-list("/api/v6/users.json",FALSE)
+
