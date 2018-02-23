@@ -30,13 +30,13 @@ app <- DockerApplication$new('/data/')
 
 app$readConfig()
 ## Daktela username
-user<-app$getParameters()'$user'
+user<-app$getParameters()$user
 ## Daktela password
 pwd<-app$getParameters()$'#pwd'
 ## Daktela server url
-url<-app$getParameters()'url'
+url<-app$getParameters()url
 ## The date
-days_past<-app$getParameters()$'from'
+days_past<-app$getParameters()$from
 
 ## Create the date from where we take data
 days_past<-ifelse(is.null(days_past),1,as.numeric(days_past))
