@@ -1,7 +1,6 @@
-# sink - posílám hlášky z KBC do p*neznáma
-sink("mgs")
-# Packages ---------------------------------------------------------------
-suppressPackageStartupMessages(install.packages('ff'))
+## Big memory handling - saves objects to disk so it does not eat RAM
+# suppressPackageStartupMessages(install.packages('ff'))
+# suppressPackageStartupMessages(library(ff, quietly = TRUE))
 
 # Libraries ---------------------------------------------------------------
 
@@ -18,8 +17,6 @@ suppressPackageStartupMessages(library(purrr, quietly = TRUE))
 suppressPackageStartupMessages(library(readr, quietly = TRUE))
 ## Parallel multithreading processing
 suppressPackageStartupMessages(library(parallel, quietly = TRUE))
-## Big memory handling - saves objects to disk so it does not eat RAM
-suppressPackageStartupMessages(library(ff, quietly = TRUE))
 ## Operations with dates
 suppressPackageStartupMessages(library(lubridate, quietly = TRUE))
 
@@ -31,8 +28,6 @@ library('keboola.r.docker.application')
 app <- DockerApplication$new('/data/')
 
 app$readConfig()
-
-sink(NULL)
 
 ## Daktela username
 user<-app$getParameters()$user
@@ -49,8 +44,6 @@ days_past<-ifelse(is.null(days_past),1,as.numeric(days_past))
 from<-Sys.Date()-days_past
 
 #********************Tereza to apply***********************
-# csvFilePath<-paste0("/data/out/tables/",endpoint[[3]],".csv")
-#    write_csv(data,csvFilePath)
 #    #Přidat manifest file
 #    app$writeTableManifest(csvFilePath,destination='')
 
@@ -62,8 +55,16 @@ if(is.null(pwd) | is.null(user) | is.null(url) ) stop("invalid credentials or si
 token<-POST(paste0(url,"/api/v6/login.json"),body=list(password=pwd,username=user,only_token=1))%>%
   content("text",encoding = "UTF-8")%>%fromJSON(flatten=TRUE,simplifyDataFrame = TRUE)%>%.$result
 
-
 # Function definition -----------------------------------------------------
+
+sanitize<-function(df,names){
+  missing_cols<-dplyr::setdiff(names,names(df))
+  if(!is_empty(missing_cols)){
+    write(paste0("Colum ",missing_cols, " is missing, inserting null values"), stdout())
+    walk(missing_cols, function(x){df[x]<-''})
+  }
+  df
+}
 
 #' Parse
 #' Default parser for the JSON response of the Daktela API
@@ -132,7 +133,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000,iterator=parse){
 
   #creating a sequence reflecting pagination limits
   i=seq(0,total,by = limit)
-  cores<-parallel::detectCores()-1
+  #cores<-parallel::detectCores()-1
 
   rows_fetched<-map(i,function(i){
     #Call the api
@@ -140,15 +141,18 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000,iterator=parse){
       #Return the json
       content("text",encoding = "UTF-8")%>%
       #Use the parse function
-      parse
+       iterator%>%
+        #Check if all rows in the names list are present
+        sanitize(endpoint[[4]])
+    
     #If i = 0 then initialize the file else append the csv using fwrite from data.table in order to not waste RAM
-    fwrite(res,paste0("/data/out/tables/",endpoint[[3]],".csv"),append = ifelse(i>0,TRUE,FALSE))%>%unlist%>%sum
-
-    nrow(res)
-  })%>%unlist%>%as.numeric%>%sum()
-
+    fwrite(res,paste0("/data/out/tables/",endpoint[[3]],".csv"),append = ifelse(i>0,TRUE,FALSE)), sep=",", sep2=c("{","|","}"))%>%unlist%>%sum
+      
+      nrow(res)
+    })%>%unlist%>%as.numeric%>%sum()
+    
   }
-
+  
     #Writing a message to the console
     b<-Sys.time()
     write(paste0("Task ",endpoint[[3]],": ",rows_fetched ,"/",total," records extracted, task duration: ",time<-round(difftime(b,a,units="secs")%>%as.numeric,2)," s"), stdout())
@@ -166,17 +170,25 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000,iterator=parse){
 #This section defines the subroutines used for particular endpoints.
 
 ## Activities
-activities<-list("/api/v6/activities.json","time","activities")
+names_activities<-c("title",       "action",      "type" ,       "survey",      "record",      "priority",    "description", "time",        "time_wait",  
+                    "time_open",   "time_close",  "name",        "important" )
+activities<-list("/api/v6/activities.json","time","activities",names_activities)
 write_endpoint(activities,token,from = from)
 
 ## ActivitiesCall
-activitiesCall<-list("/api/v6/activitiesCall.json","call_time","activitiesCall")
+names_activitiesCall<-c("id_call" ,            "call_time",           "direction",           "answered",            "clid",               
+                        "prefix_clid_name",    "did",                 "waiting_time",        "ringing_time",        "hold_time",          
+                        "duration",            "orig_pos",            "position",            "disposition_cause",   "disconnection_cause",
+                        "pressed_key",         "missed_call",         "missed_call_time",    "attempts",            "score",              
+                        "note",                "qa_user_id",          "name",                "queue",               "queue_title",        
+                        "agent_title")
+activitiesCall<-list("/api/v6/activitiesCall.json","call_time","activitiesCall",names_activitiesCall)
 
 ### Iterator function for Activities Call transformation
 iterator_activitiesCall<-function(r){
   clean<-r%>%fromJSON(flatten=TRUE,simplifyDataFrame = TRUE)%>%.$result%>%.$data%>%select(-contains("."))%>%as_data_frame
   df<-r%>%fromJSON(flatten=FALSE,simplifyDataFrame = TRUE)%>%.$result%>%.$data
-  df<-data_frame(queue=map(df,"name")$id_queue,
+  df<-data_frame(queue_id=map(df,"name")$id_queue,
                  queue_title=map(df,"title")$id_queue,
                  agent_title=map(df,"title")$id_agent
   )
@@ -185,56 +197,133 @@ iterator_activitiesCall<-function(r){
 write_endpoint(activitiesCall,token,from = from,iterator = iterator_activitiesCall)
 
 ## ActivitiesEmail
-activitiesEmail<-list("/api/v6/activitiesEmail.json","time","activitiesEmail")
+names_activitiesEmail<-c( "address",     "direction",   "wait_time",   "duration",    "answered",    "text",        "time",        "name",        "title",     
+                          "queue_title", "queue_id"  )
+
+activitiesEmail<-list("/api/v6/activitiesEmail.json","time","activitiesEmail",names_activitiesEmail)
 
 ### Iterator function for Activities Email transformation
 iterator_activitiesEmail<-function(r){
   clean<-r%>%fromJSON(flatten=TRUE,simplifyDataFrame = TRUE)%>%.$result%>%.$data%>%select(-contains("."))%>%as_data_frame
   df<-r%>%fromJSON(flatten=FALSE,simplifyDataFrame = TRUE)%>%.$result%>%.$data
-  df<-data_frame(queue_title=map(df,"title")$queue
+  df<-data_frame(queue_title=map(df,"title")$queue,
+                 queue_id=map(df,"name")$queue
   )
   out<-clean%>%bind_cols(df)%>%select(-files)
 }
 write_endpoint(activitiesEmail,token,from = from,iterator = iterator_activitiesEmail)
 
 ## ActivitiesChat
-activitiesChat<-list("/api/v6/activitiesChat.json","time","activitiesChat")
+names_activitiesChat<- c("title", "email","wait_time","duration","answered","disconnection","time","name",
+                         "ip","country_code","country_name","region_code","region_name","city","zip_code","time_zone","latitude",
+                         "longitude","metro_code"
+)
+activitiesChat<-list("/api/v6/activitiesChat.json","time","activitiesChat",names_activitiesChat)
 iterator_activitiesChat<-function(r){
   clean<-r%>%fromJSON(flatten=TRUE,simplifyDataFrame = TRUE)%>%.$result%>%.$data%>%select(-contains("."))%>%as_data_frame
-  df<-r%>%fromJSON(flatten=FALSE,simplifyDataFrame = TRUE)%>%.$result%>%.$data
+  df<-r%>%fromJSON(flatten=FALSE,simplifyDataFrame = TRUE)%>%.$result%>%.$
+  geo<-map(df,"geoip")$options
   df<-data_frame(queue_title=map(df,"title")$queue,
-                 referer=map(df,"referer")$options
+                 referer=map(df,"referer")$options,
+                 queue_id=map(df,"name")$queue
   )
-  out<-clean%>%bind_cols(df)
+  out<-clean%>%bind_cols(df)%>%bind_cols(geo)
 }
 write_endpoint(activitiesChat,token,from = from,iterator = iterator_activitiesChat)
 
 ## Accounts
-accounts<-list("/api/v6/accounts.json",FALSE,"accounts")
-write_endpoint(accounts,token,from = from,iterator = FALSE)
+names_accounts<-c("title",
+                  "survey",
+                  "description",
+                  "deleted",
+                  "name")
+accounts<-list("/api/v6/accounts.json",FALSE,"accounts",names_accounts)
+write_endpoint(accounts,token,from = from)
 
 ## Groups
-groups<-list("/api/v6/groups.json",FALSE,"groups")
-write_endpoint(groups,token,from = from,iterator = FALSE)
+names_groups<-c("title",
+                "description",
+                "type",
+                "deleted",
+                "name")
+groups<-list("/api/v6/groups.json",FALSE,"groups",names_groups)
+write_endpoint(groups,token,from = from)
 
 ## Pauses
-pauses<-list("/api/v6/pauses.json",FALSE,"pauses")
-write_endpoint(pauses,token,from = from,iterator = FALSE)
+names_pauses<-c("name",
+                "title",
+                "paid",
+                "type",
+                "max_duration",
+                "calculated_from",
+                "auto_pause",
+                "deleted")
+pauses<-list("/api/v6/pauses.json",FALSE,"pauses",names_pauses)
+write_endpoint(pauses,token,from = from)
 
 ## Queues
-queues<-list("/api/v6/queues.json",FALSE,"queues")
-write_endpoint(queues,token,from = from,iterator = FALSE)
+names_queues<-c("title",
+                "description",
+                "type",
+                "direction",
+                "deactivated",
+                "deleted",
+                "name",
+                "usersCount" )
+queues<-list("/api/v6/queues.json",FALSE,"queues",names_queues)
+write_endpoint(queues,token,from = from)
 
 ## Statuses
-statuses<-list("/api/v6/statuses.json",FALSE,"statuses")
-write_endpoint(statuses,token,from = from,iterator = FALSE)
+names_statuses<-c("title",
+                  "validation",
+                  "nextcall",
+                  "blacklist_database",
+                  "blacklist_expiration_time",
+                  "color",
+                  "deleted",
+                  "name" )
+statuses<-list("/api/v6/statuses.json",FALSE,"statuses", names_statuses)
+write_endpoint(statuses,token,from = from)
 
 ## Templates
-templates<-list("/api/v6/templates.json",FALSE,"templates")
-write_endpoint(templates,token,from = from,iterator = FALSE)
+names_templates<-c("title",
+                   "description",
+                   "format",
+                   "usingtype",
+                   "content",
+                   "deleted",
+                   "id_template",
+                   "name")
+templates<-list("/api/v6/templates.json",FALSE,"templates",names_templates)
+write_endpoint(templates,token,from = from)
 
 ## Tickets
-tickets<-list("/api/v6/tickets.json","edited","tickets")
-write_endpoint(tickets,token,from = from,iterator = FALSE)
+names_tickets<-c("title",
+                 "email",
+                 "description",
+                 "stage",
+                 "priority",
+                 "sla_deadtime",
+                 "sla_change",
+                 "sla_notify",
+                 "sla_duration",
+                 "sla_custom",
+                 "survey",
+                 "survey_offered",
+                 "satisfaction",
+                 "satisfaction_comment",
+                 "reopen",
+                 "deleted",
+                 "created",
+                 "edited",
+                 "first_answer",
+                 "first_answer_duration",
+                 "closed",
+                 "unread",
+                 "has_attachment",
+                 "name",
+                 "isBookmarked")
+tickets<-list("/api/v6/tickets.json","edited","tickets",names_tickets)
+write_endpoint(tickets,token,from = from)
 
 
