@@ -218,17 +218,21 @@ names_activitiesChat<- c("title", "email","wait_time","duration","answered","dis
                          "ip","country_code","country_name","region_code","region_name","city","zip_code","time_zone","latitude",
                          "longitude","metro_code"
 )
+
 activitiesChat<-list("/api/v6/activitiesChat.json","time","activitiesChat",names_activitiesChat)
+
 iterator_activitiesChat<-function(r){
   clean<-r%>%fromJSON(flatten=TRUE,simplifyDataFrame = TRUE)%>%.$result%>%.$data%>%select(-contains("."))%>%as_data_frame
-  df<-r%>%fromJSON(flatten=FALSE,simplifyDataFrame = TRUE)%>%.$result%>%.$
+  df<-r%>%fromJSON(flatten=FALSE,simplifyDataFrame = TRUE)%>%.$result%>%.$data
   geo<-map(df,"geoip")$options
   df<-data_frame(queue_title=map(df,"title")$queue,
                  referer=map(df,"referer")$options,
                  queue_id=map(df,"name")$queue
+                 
   )
   out<-clean%>%bind_cols(df)%>%bind_cols(geo)
 }
+
 write_endpoint(activitiesChat,token,from = from,iterator = iterator_activitiesChat)
 
 ## Accounts
