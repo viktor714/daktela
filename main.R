@@ -1,11 +1,7 @@
-## Big memory handling - saves objects to disk so it does not eat RAM
-# suppressPackageStartupMessages(install.packages('ff'))
-# suppressPackageStartupMessages(library(ff, quietly = TRUE))
 
 # Libraries ---------------------------------------------------------------
 
 ## API calls with R
-suppressPackageStartupMessages(library(httr))
 ## Data wrangling - equivalent to pandas + piping
 suppressPackageStartupMessages(library(dplyr, quietly = TRUE))
 suppressPackageStartupMessages(library(data.table, quietly = TRUE))
@@ -43,11 +39,6 @@ days_past<-ifelse(is.null(days_past),1,as.numeric(days_past))
 
 from<-Sys.Date()-days_past
 
-#********************Tereza to apply***********************
-#    #Přidat manifest file
-#    app$writeTableManifest(csvFilePath,destination='')
-
-#*********************Tereza end *********************
 ##Catch config errors
 if(is.null(pwd) | is.null(user) | is.null(url) ) stop("invalid credentials or site URL")
 
@@ -152,7 +143,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000,iterator=parse){
     })%>%unlist%>%as.numeric%>%sum()
     
   }
-   
+    #app$writeTableManifest(csvFilePath,destination='')
     #Writing a message to the console
     b<-Sys.time()
     write(paste0("Task ",endpoint[[3]],": ",rows_fetched ,"/",total," records extracted, task duration: ",time<-round(difftime(b,a,units="secs")%>%as.numeric,2)," s"), stdout())
@@ -164,7 +155,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000,iterator=parse){
     log<-data_frame("date"=Sys.time(),"endpoint"=endpoint[[3]],"exported_records"=total,"extraction_time"=time)
     fwrite(log,"/data/out/tables/out_log.csv",append=logfile_created)
   }
-
+    #app$writeTableManifest(csvFilePath,destination='')
 
 # Extraction of endpoints -------------------------------------------------
 #This section defines the subroutines used for particular endpoints.
