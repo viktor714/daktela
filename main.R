@@ -155,7 +155,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000,iterator=parse){
     log<-data_frame("date"=Sys.time(),"endpoint"=endpoint[[3]],"exported_records"=total,"extraction_time"=time)
     fwrite(log,"/data/out/tables/out_log.csv",append=logfile_created)
   }
-    app$writeTableManifest(csvFilePath,destination='', primaryKey =c('date','endpoint'))
+    app$writeTableManifest("/data/out/tables/out_log.csv",destination='', primaryKey =c('date','endpoint'))
 
 # Extraction of endpoints -------------------------------------------------
 #This section defines the subroutines used for particular endpoints.
