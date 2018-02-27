@@ -143,14 +143,21 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000,iterator=parse){
     })%>%unlist%>%as.numeric%>%sum()
     
   }
-    #app$writeTableManifest(csvFilePath,destination='')
+    if (endpoint[[3]]=="activitiesCall") {
+            app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey =c('id_call'))
+    } else if (endpoint[[3]]=="pauses") {
+            app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='')
+    } else {
+            app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey =c('name'))
+            }
+  
     #Writing a message to the console
     b<-Sys.time()
     write(paste0("Task ",endpoint[[3]],": ",rows_fetched ,"/",total," records extracted, task duration: ",time<-round(difftime(b,a,units="secs")%>%as.numeric,2)," s"), stdout())
 
     #Process log info
     ## Check if out_log.csv exists
-    logfile_created<-file.exists("out/tables/out_log.csv")
+    logfile_created<-file.exists("/data/out/tables/out_log.csv")
 
     log<-data_frame("date"=Sys.time(),"endpoint"=endpoint[[3]],"exported_records"=total,"extraction_time"=time)
     fwrite(log,"/data/out/tables/out_log.csv",append=logfile_created)
