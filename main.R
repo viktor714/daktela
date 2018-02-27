@@ -15,6 +15,8 @@ suppressPackageStartupMessages(library(readr, quietly = TRUE))
 suppressPackageStartupMessages(library(parallel, quietly = TRUE))
 ## Operations with dates
 suppressPackageStartupMessages(library(lubridate, quietly = TRUE))
+suppressPackageStartupMessages(library(httr, quietly = TRUE))
+
 
 # Input config ------------------------------------------------------------
 
