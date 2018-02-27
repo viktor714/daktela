@@ -2,6 +2,7 @@
 # Libraries ---------------------------------------------------------------
 
 ## API calls with R
+suppressPackageStartupMessages(library(httr))
 ## Data wrangling - equivalent to pandas + piping
 suppressPackageStartupMessages(library(dplyr, quietly = TRUE))
 suppressPackageStartupMessages(library(data.table, quietly = TRUE))
@@ -15,7 +16,6 @@ suppressPackageStartupMessages(library(readr, quietly = TRUE))
 suppressPackageStartupMessages(library(parallel, quietly = TRUE))
 ## Operations with dates
 suppressPackageStartupMessages(library(lubridate, quietly = TRUE))
-suppressPackageStartupMessages(library(httr, quietly = TRUE))
 
 
 # Input config ------------------------------------------------------------
