@@ -139,7 +139,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000,iterator=parse){
         sanitize(endpoint[[4]])
     
     #If i = 0 then initialize the file else append the csv using fwrite from data.table in order to not waste RAM
-    fwrite(res,paste0("/data/out/tables/",endpoint[[3]],".csv"),append = ifelse(i>0,TRUE,FALSE), sep=",", sep2=c("{","|","}"))%>%unlist%>%sum
+    fwrite(res,paste0("/data/out/tables/",endpoint[[3]],".csv"),append = ifelse(i>0,TRUE,FALSE), sep=",", sep2=c("{","|","}"), eol = "\n")%>%unlist%>%sum
       
       nrow(res)
     })%>%unlist%>%as.numeric%>%sum()
