@@ -143,8 +143,6 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000,iterator=parse){
       
       nrow(res)
     })%>%unlist%>%as.numeric%>%sum()
-    
-  }
     if (endpoint[[3]]=="activitiesCall") {
             app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey =c('id_call'))
     } else if (endpoint[[3]]=="pauses") {
@@ -152,6 +150,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000,iterator=parse){
     } else {
             app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey =c('name'))
             }
+  }
   
     #Writing a message to the console
     b<-Sys.time()
