@@ -35,6 +35,8 @@ pwd<-app$getParameters()$'#pwd'
 url<-app$getParameters()$url
 ## The date
 days_past<-app$getParameters()$from
+## Incremental load
+increment<-app$getParameters()$incremental
 
 ## Create the date from where we take data
 days_past<-ifelse(is.null(days_past),1,as.numeric(days_past))
@@ -146,9 +148,9 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000,iterator=parse){
       
     })%>%unlist%>%as.numeric%>%sum() 
      if (endpoint[[3]]=="activitiesCall") {
-           app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey =c('id_call'),incremental = TRUE)
+           app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey =c('id_call'),incremental = increment)
    } else {
-          app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey =c('name'),incremental = TRUE)
+          app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey =c('name'),incremental = increment)
          }
   }
   
@@ -164,7 +166,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000,iterator=parse){
   fwrite(log,"/data/out/tables/out_log.csv",append=logfile_created)
 }
 
-  # app$writeTableManifest("/data/out/tables/out_log.csv",destination='', primaryKey =c('date','endpoint'), incremental = TRUE)
+  app$writeTableManifest("/data/out/tables/out_log.csv",destination='', primaryKey =c('date','endpoint'), incremental = increment)
 
 
 # Extraction of endpoints -------------------------------------------------
