@@ -148,9 +148,9 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000,iterator=parse){
       
     })%>%unlist%>%as.numeric%>%sum() 
      if (endpoint[[3]]=="activitiesCall") {
-           app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey =c('id_call'),incremental = TRUE)
+           app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey =c('id_call'),incremental= ifelse(increment="TRUE",TRUE,FALSE))
    } else {
-          app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey =c('name'),incremental = TRUE)
+          app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey =c('name'),incremental= ifelse(increment="TRUE",TRUE,FALSE))
          }
   }
   
@@ -166,7 +166,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000,iterator=parse){
   fwrite(log,"/data/out/tables/out_log.csv",append=logfile_created)
 }
 
-  app$writeTableManifest("/data/out/tables/out_log.csv",destination='', primaryKey =c('date','endpoint'), incremental =increment)
+  app$writeTableManifest("/data/out/tables/out_log.csv",destination='', primaryKey =c('date','endpoint'), incremental= ifelse(increment="TRUE",TRUE,FALSE))
 
 
 # Extraction of endpoints -------------------------------------------------
