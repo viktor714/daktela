@@ -49,14 +49,14 @@ token<-POST(paste0(url,"/api/v6/login.json"),body=list(password=pwd,username=use
   content("text",encoding = "UTF-8")%>%fromJSON(flatten=TRUE,simplifyDataFrame = TRUE)%>%.$result
 
 # Function definition -----------------------------------------------------
-
-sanitize<-function(df,names){
-  missing_cols<-dplyr::setdiff(names,names(df))
+sanitize<-function(df,names_unique){
+  missing_cols<-dplyr::setdiff(names_unique,names(df))
   if(!is_empty(missing_cols)){
-    write(paste0("Colum ",missing_cols, " is missing, inserting null values"), stdout())
-    walk(missing_cols, function(x){df[x]<-''})
+    #write(paste0("Colum ",missing_cols, " is missing, inserting null values"), stdout())
+    df[,missing_cols]<-''
   }
-  df
+  
+  df%>%select(names_unique)
 }
 
 #' Parse
@@ -98,72 +98,74 @@ parse <-
 #' @examples
 #'
 write_endpoint<-function(endpoint,token,from=NULL,limit=1000,iterator=parse){
-
+  
   #Record task start time
   a<-Sys.time()
-
+  
   ## Looking wether the time filter is applied and changing the endpoint url accordingly
   endpoint_url<-if_else(is.null(from) | endpoint[[2]]==FALSE,
-                       #FALSE - without filter
-                       endpoint[[1]],
-                       #TRUE - with time filter
-                       paste0(endpoint[[1]],"?filter[field]=",endpoint[[2]],"&filter[operator]=gte&filter[value]=",from))
-
+                        #FALSE - without filter
+                        endpoint[[1]],
+                        #TRUE - with time filter
+                        paste0(endpoint[[1]],"?filter[field]=",endpoint[[2]],"&filter[operator]=gte&filter[value]=",from))
+  
   ## Filtering example /api/v6/contacts.json?filter[field]=Time&filter[operator]=gte&filter[value]=2018-01-01
-
+  
   #create the endpoint url
   call<-paste0(url,endpoint_url)
-
+  
   #get the size of the list
   total<-GET(call,query=list(accessToken=token,skip=0,take=1))%>%
     content("text",encoding = "UTF-8")%>%fromJSON(flatten=TRUE,simplifyDataFrame = FALSE)%>%.$result%>%.$total
-
+  
   #continue only if size of the list >0
   if(total<1){
     write(paste0("Report ",endpoint[[3]], " is empty for selected criteria "), stdout())
     rows_fetched<-0
   } else {
-
-  #creating a sequence reflecting pagination limits
-  i=seq(0,total,by = limit)
-  #cores<-parallel::detectCores()-1
-
-  rows_fetched<-map(i,function(i){
-    #Call the api
-    res<-GET(call,query=list(accessToken=token,skip=i,take=limit))%>%
-      #Return the json
-      content("text",encoding = "UTF-8")%>%
-      #Use the parse function
-       iterator%>%
+    
+    #creating a sequence reflecting pagination limits
+    i=seq(0,total,by = limit)
+    
+    rows_fetched<-map(i,function(i){
+      #Call the api
+      tryCatch(
+      {res<-GET(call,query=list(accessToken=token,skip=i%>%as.integer,take=limit))%>%
+        #Return the json
+        content("text",encoding = "UTF-8")%>%
+        #Use the parse function
+        iterator%>%
         #Check if all rows in the names list are present
         sanitize(endpoint[[4]])
-    
-    #If i = 0 then initialize the file else append the csv using fwrite from data.table in order to not waste RAM
-    fwrite(res,paste0("/data/out/tables/",endpoint[[3]],".csv"),append = ifelse(i>0,TRUE,FALSE), sep=",", sep2=c("{","|","}"), eol = "\n")%>%unlist%>%sum
       
-      nrow(res)
-    })%>%unlist%>%as.numeric%>%sum()
-    if (endpoint[[3]]=="activitiesCall") {
-            app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey =c('id_call'))
-    } else if (endpoint[[3]]=="pauses") {
-            app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='')
-    } else {
-            app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey =c('name'))
-            }
+      #If i = 0 then initialize the file else append the csv using fwrite from data.table in order to not waste RAM
+      fwrite(res,paste0("/data/out/tables/",endpoint[[3]],".csv"),append = ifelse(i>0,TRUE,FALSE), sep=",", sep2=c("{","|","}"))
+      
+      cnt<-nrow(res) },
+      error=function(e){print(paste0("iteration: ",as.integer(i)%>%as.character, "failed. Error: ",message(e))); return(0)})
+      
+    })%>%unlist%>%as.numeric%>%sum() 
+     if (endpoint[[3]]=="activitiesCall") {
+           app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey =c('id_call'),incremental = TRUE)
+   } else {
+          app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey =c('name'),incremental = TRUE)
+         }
   }
   
-    #Writing a message to the console
-    b<-Sys.time()
-    write(paste0("Task ",endpoint[[3]],": ",rows_fetched ,"/",total," records extracted, task duration: ",time<-round(difftime(b,a,units="secs")%>%as.numeric,2)," s"), stdout())
+  #Writing a message to the console
+  b<-Sys.time()
+  write(paste0("Task ",endpoint[[3]],": ",rows_fetched ,"/",total," records extracted, task duration: ",time<-round(difftime(b,a,units="secs")%>%as.numeric,2)," s"), stdout())
+  
+  #Process log info
+  ## Check if out_log.csv exists
+  logfile_created<-file.exists("out/tables/out_log.csv")
+  
+  log<-data_frame("date"=Sys.time(),"endpoint"=endpoint[[3]],"exported_records"=total,"extraction_time"=time)
+  fwrite(log,"/data/out/tables/out_log.csv",append=logfile_created)
+}
 
-    #Process log info
-    ## Check if out_log.csv exists
-    logfile_created<-file.exists("/data/out/tables/out_log.csv")
+  # app$writeTableManifest("/data/out/tables/out_log.csv",destination='', primaryKey =c('date','endpoint'), incremental = TRUE)
 
-    log<-data_frame("date"=Sys.time(),"endpoint"=endpoint[[3]],"exported_records"=total,"extraction_time"=time)
-    fwrite(log,"/data/out/tables/out_log.csv",append=logfile_created)
-  }
-    app$writeTableManifest("/data/out/tables/out_log.csv",destination='', primaryKey =c('date','endpoint'))
 
 # Extraction of endpoints -------------------------------------------------
 #This section defines the subroutines used for particular endpoints.
@@ -171,6 +173,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000,iterator=parse){
 ## Activities
 names_activities<-c("title",       "action",      "type" ,       "survey",      "record",      "priority",    "description", "time",        "time_wait",  
                     "time_open",   "time_close",  "name",        "important" )
+
 activities<-list("/api/v6/activities.json","time","activities",names_activities)
 write_endpoint(activities,token,from = from)
 
@@ -180,7 +183,8 @@ names_activitiesCall<-c("id_call" ,            "call_time",           "direction
                         "duration",            "orig_pos",            "position",            "disposition_cause",   "disconnection_cause",
                         "pressed_key",         "missed_call",         "missed_call_time",    "attempts",            "score",              
                         "note",                "qa_user_id",          "name",                "queue",               "queue_title",        
-                        "agent_title")
+                        "agent_title","queue_id")
+
 activitiesCall<-list("/api/v6/activitiesCall.json","call_time","activitiesCall",names_activitiesCall)
 
 ### Iterator function for Activities Call transformation
@@ -196,6 +200,7 @@ iterator_activitiesCall<-function(r){
 write_endpoint(activitiesCall,token,from = from,iterator = iterator_activitiesCall)
 
 ## ActivitiesEmail
+
 names_activitiesEmail<-c( "address",     "direction",   "wait_time",   "duration",    "answered",    "text",        "time",        "name",        "title",     
                           "queue_title", "queue_id"  )
 
@@ -215,7 +220,7 @@ write_endpoint(activitiesEmail,token,from = from,iterator = iterator_activitiesE
 ## ActivitiesChat
 names_activitiesChat<- c("title", "email","wait_time","duration","answered","disconnection","time","name",
                          "ip","country_code","country_name","region_code","region_name","city","zip_code","time_zone","latitude",
-                         "longitude","metro_code"
+                         "longitude","metro_code","queue_title","referer","queue_id"
 )
 
 activitiesChat<-list("/api/v6/activitiesChat.json","time","activitiesChat",names_activitiesChat)
@@ -232,6 +237,8 @@ iterator_activitiesChat<-function(r){
   out<-clean%>%bind_cols(df)%>%bind_cols(geo)
 }
 
+
+
 write_endpoint(activitiesChat,token,from = from,iterator = iterator_activitiesChat)
 
 ## Accounts
@@ -240,19 +247,24 @@ names_accounts<-c("title",
                   "description",
                   "deleted",
                   "name")
+
 accounts<-list("/api/v6/accounts.json",FALSE,"accounts",names_accounts)
+
 write_endpoint(accounts,token,from = from)
 
 ## Groups
+
 names_groups<-c("title",
                 "description",
                 "type",
                 "deleted",
                 "name")
 groups<-list("/api/v6/groups.json",FALSE,"groups",names_groups)
+
 write_endpoint(groups,token,from = from)
 
 ## Pauses
+
 names_pauses<-c("name",
                 "title",
                 "paid",
@@ -261,7 +273,9 @@ names_pauses<-c("name",
                 "calculated_from",
                 "auto_pause",
                 "deleted")
+
 pauses<-list("/api/v6/pauses.json",FALSE,"pauses",names_pauses)
+
 write_endpoint(pauses,token,from = from)
 
 ## Queues
@@ -273,7 +287,9 @@ names_queues<-c("title",
                 "deleted",
                 "name",
                 "usersCount" )
+
 queues<-list("/api/v6/queues.json",FALSE,"queues",names_queues)
+
 write_endpoint(queues,token,from = from)
 
 ## Statuses
@@ -285,7 +301,9 @@ names_statuses<-c("title",
                   "color",
                   "deleted",
                   "name" )
-statuses<-list("/api/v6/statuses.json",FALSE,"statuses", names_statuses)
+
+statuses<-list("/api/v6/statuses.json",FALSE,"statuses",names_statuses)
+
 write_endpoint(statuses,token,from = from)
 
 ## Templates
@@ -297,10 +315,13 @@ names_templates<-c("title",
                    "deleted",
                    "id_template",
                    "name")
+
 templates<-list("/api/v6/templates.json",FALSE,"templates",names_templates)
+
 write_endpoint(templates,token,from = from)
 
 ## Tickets
+
 names_tickets<-c("title",
                  "email",
                  "description",
@@ -326,7 +347,7 @@ names_tickets<-c("title",
                  "has_attachment",
                  "name",
                  "isBookmarked")
+
 tickets<-list("/api/v6/tickets.json","edited","tickets",names_tickets)
+
 write_endpoint(tickets,token,from = from)
-
-
