@@ -166,7 +166,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000,iterator=parse){
   fwrite(log,"/data/out/tables/out_log.csv",append=logfile_created)
 }
 
-  app$writeTableManifest("/data/out/tables/out_log.csv",destination='', primaryKey =c('date','endpoint'), incremental = TRUE)
+  app$writeTableManifest("/data/out/tables/out_log.csv",destination='', primaryKey =c('date','endpoint'), incremental =increment)
 
 
 # Extraction of endpoints -------------------------------------------------
