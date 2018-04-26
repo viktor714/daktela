@@ -18,7 +18,7 @@ suppressPackageStartupMessages(library(stringr, quietly = TRUE))
 
 # Input config ------------------------------------------------------------
 
- ## initialize keboola application this saves all user inputs from the extractor to variables
+## initialize keboola application this saves all user inputs from the extractor to variables
  library(‘keboola.r.docker.application’)
  app <- DockerApplication$new(‘/data/‘)
 
@@ -27,13 +27,15 @@ suppressPackageStartupMessages(library(stringr, quietly = TRUE))
  ## Daktela username
  user<-app$getParameters()$user
  ## Daktela password
- pwd<-app$getParameters()$‘#pwd’
+ pwd<-app$getParameters()$'#pwd'
  ## Daktela server url
- url<-app$getParameters()$url
+ server<-app$getParameters()$server
  ## The date
  days_past<-app$getParameters()$from
-## Incremental load
+ ## Incremental load
  increment<-app$getParameters() $incremental
+
+url<-paste0("https://",server,".daktela.com")
 
 # Init --------------------------------------------------------------------
 
