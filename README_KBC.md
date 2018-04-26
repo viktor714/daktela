@@ -29,6 +29,7 @@ https://www.daktela.com/api/v6/
 There are no specified primary keys of imported tables. Instead, user must set the primary keys manually in the KBC UI within the STORAGE section after the first successfull import.
 
 **R script details**
+
 Skript automaticky prefixuje názvy tabulek a indexy tak aby obsahovaly jméno ústředny.
 Tabulky digital engines se budou jmenovat digitalengines_activities
 Indexy jako name v tabulce activities budou upraveny na digitalengines_unikatní_id kvůli deduplikaci indexů při sloučení dat v ústředně.
