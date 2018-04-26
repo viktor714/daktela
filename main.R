@@ -12,11 +12,10 @@ suppressPackageStartupMessages(library(jsonlite, quietly = TRUE))
 suppressPackageStartupMessages(library(purrr, quietly = TRUE))
 ## Reading and writing CSV files and other formats (--ditch this if ff solves the problem)
 suppressPackageStartupMessages(library(readr, quietly = TRUE))
-## Parallel multithreading processing
-suppressPackageStartupMessages(library(parallel, quietly = TRUE))
 ## Operations with dates
 suppressPackageStartupMessages(library(lubridate, quietly = TRUE))
-
+## string manipulation
+suppressPackageStartupMessages(library(stringr, quietly = TRUE))
 
 # Input config ------------------------------------------------------------
 
