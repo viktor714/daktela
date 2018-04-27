@@ -19,8 +19,8 @@ suppressPackageStartupMessages(library(stringr, quietly = TRUE))
 # Input config ------------------------------------------------------------
 
 ## initialize keboola application this saves all user inputs from the extractor to variables
- library(‘keboola.r.docker.application’)
- app <- DockerApplication$new(‘/data/‘)
+ library('keboola.r.docker.application')
+ app <- DockerApplication$new('/data/')
 
  app$readConfig()
 
