@@ -157,7 +157,6 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
         error=function(e){print(paste0("iteration: ",as.integer(i)%>%as.character, "failed. Error: ",message(e))); return(0)})
 
     })%>%unlist%>%as.numeric%>%sum()
-    }
   
   #Writing a message to the console
   b<-Sys.time()
