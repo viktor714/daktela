@@ -164,7 +164,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
 
 #--------------------------------------------------addition for Keboola extractor------------------
     if (endpoint[[3]]=="activitiesCall") {
-           app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey =c('item_id_call'),incremental=TRUE)
+           app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey==c('item_id_call'),incremental=TRUE)
    } else if (endpoint[[3]]=="activites") {
            app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey==c('name'),incremental=TRUE)
     	}
@@ -173,7 +173,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
 '),incremental=TRUE)
     	}
      else
-          app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey ='',incremental= FALSE)
+          app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey='',incremental= FALSE)
          }
 #---------------------------------------------------------------------------------
 
