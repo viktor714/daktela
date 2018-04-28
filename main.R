@@ -151,7 +151,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
             .$result%>%.$data%>%as_data_frame%>%sanitize(endpoint[[4]],endpoint[[3]])
 
           #If i = 0 then initialize the file else append the csv using fwrite from data.table in order to not waste RAM
-          fwrite(res,paste0("out/tables/",prefix,endpoint[[3]],".csv"),append = ifelse(i>0,TRUE,FALSE), sep=",", sep2=c("{","|","}"))
+          fwrite(res,paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"),append = ifelse(i>0,TRUE,FALSE), sep=",", sep2=c("{","|","}"))
 
           cnt<-nrow(res) },
         error=function(e){print(paste0("iteration: ",as.integer(i)%>%as.character, "failed. Error: ",message(e))); return(0)})
