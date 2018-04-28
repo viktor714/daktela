@@ -157,6 +157,12 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
         error=function(e){print(paste0("iteration: ",as.integer(i)%>%as.character, "failed. Error: ",message(e))); return(0)})
 
     })%>%unlist%>%as.numeric%>%sum()
+    }
+  
+  #Writing a message to the console
+  b<-Sys.time()
+  write(paste0("Task ",endpoint[[3]],": ",rows_fetched ,"/",total," records extracted, task duration: ",time<-round(difftime(b,a,units="secs")%>%as.numeric,2)," s"), stdout())
+
 #--------------------------------------------------addition for Keboola extractor------------------
     if (endpoint[[3]]=="activitiesCall") {
            app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey =c('item_id_call'),incremental=TRUE)
@@ -170,12 +176,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
      else
           app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey ='',incremental= FALSE)
          }
-  }
 #---------------------------------------------------------------------------------
-  
-  #Writing a message to the console
-  b<-Sys.time()
-  write(paste0("Task ",endpoint[[3]],": ",rows_fetched ,"/",total," records extracted, task duration: ",time<-round(difftime(b,a,units="secs")%>%as.numeric,2)," s"), stdout())
 
   #Process log info
   ## Check if out_log.csv exists
