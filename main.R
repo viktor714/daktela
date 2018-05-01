@@ -166,10 +166,10 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
     if (endpoint[[3]]=="activitiesCall") {
            app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey='',incremental=TRUE)
    } else if (endpoint[[3]]=="activites") {
-           app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey==c('name'),incremental=TRUE)
+           app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey=c('name'),incremental=TRUE)
     	}
     else if (endpoint[[3]]=="activitiesChat"|endpoint[[3]]=="activitiesEmail") {
-           app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey==c('item_name
+           app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey=c('item_name
 '),incremental=TRUE)
     	}
      else
@@ -184,7 +184,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
   log<-data_frame("date"=Sys.time(),"endpoint"=endpoint[[3]],"exported_records"=total,"extraction_time"=time)
   fwrite(log,paste0("/data/out/tables/",prefix,"log.csv"),append=logfile_created)
 }
-  app$writeTableManifest("/data/out/tables/out_log.csv",destination='', primaryKey =c('date','endpoint'), incremental=TRUE)
+  app$writeTableManifest("/data/out/tables/out_log.csv",destination='', primaryKey=c('date','endpoint'), incremental=TRUE)
 
   # ## Accounts) ------------------------------------------------------------
 
