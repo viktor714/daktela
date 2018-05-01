@@ -185,7 +185,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
   fwrite(log,paste0("/data/out/tables/",prefix,"log.csv"),append=logfile_created)
 }
   app$writeTableManifest(paste0("/data/out/tables/",prefix,"log.csv"),destination='', primaryKey=c('date','endpoint'), incremental=TRUE)
-
+}
   # ## Accounts) ------------------------------------------------------------
 
 names_accounts<-c( key="name",
