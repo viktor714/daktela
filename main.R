@@ -179,12 +179,12 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
 
   #Process log info
   ## Check if out_log.csv exists
-  logfile_created<-file.exists("/data/out/tables/out_log.csv")
+  logfile_created<-file.exists(paste0("/data/out/tables/",prefix,"log.csv"))
 
   log<-data_frame("date"=Sys.time(),"endpoint"=endpoint[[3]],"exported_records"=total,"extraction_time"=time)
   fwrite(log,paste0("/data/out/tables/",prefix,"log.csv"),append=logfile_created)
 }
-  app$writeTableManifest("/data/out/tables/out_log.csv",destination='', primaryKey=c('date','endpoint'), incremental=TRUE)
+  app$writeTableManifest(paste0("/data/out/tables/",prefix,"log.csv"),destination='', primaryKey=c('date','endpoint'), incremental=TRUE)
 
   # ## Accounts) ------------------------------------------------------------
 
