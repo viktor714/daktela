@@ -172,10 +172,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
            app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey=c('item_name
 '),incremental=TRUE)
     	}
-     else if (endpoint[[3]]=="") {
-      app$writeTableManifest("/data/out/tables/out_log.csv",destination='', primaryKey=c('date','endpoint'), incremental=TRUE)
-      }
-     else
+     else {
           app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey='',incremental= FALSE)
          }
 #---------------------------------------------------------------------------------
