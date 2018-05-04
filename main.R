@@ -65,12 +65,12 @@ sanitize<-function(res,names_unique,df_name){
   }
   
   index<-names_unique[names(names_unique)=="key"]
-#If the prefix is set this will rewrite all the key columns to make sure they have the prefix in the index
+  #If the prefix is set this will rewrite all the key columns to make sure they have the prefix in the index
   if(prefix!=""){
-  res<-res %>% 
-    select(index) %>% 
-    mutate_all(function(x){ x<-paste0(prefix,x)}) %>% 
-    cbind(.,res[setdiff(names_unique,index)])
+    res<-res %>% 
+      select(index) %>% 
+      mutate_all(function(x){ x<-paste0(prefix,x)}) %>% 
+      cbind(.,res[setdiff(names_unique,index)])
   }
   
   res<-res%>%select(names_unique)
@@ -86,10 +86,10 @@ sanitize<-function(res,names_unique,df_name){
 #?fields[0]=firstname&fields[1]=lastname&fields[2]=account.title
 
 get_fields<-function(fields){
-
+  
   elements<-map2_chr(fields,seq_along(fields)-1, function(x,y){ paste0("fields[",y,"]=",x) })
   string=paste0(elements, collapse = "&")
-
+  
 }
 
 #' Parse
@@ -97,35 +97,35 @@ get_fields<-function(fields){
 
 
 write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
-
+  
   #Record task start time
   a<-Sys.time()
-
+  
   #Hardcode the fields to return
   #&filter[field]=firstname&filter[operator]=eq&filter[value]=John
   filter<-ifelse(endpoint[[5]]==FALSE,'',endpoint[[5]])
-
+  
   fields<-map2_chr(endpoint[[4]],seq_along(endpoint[[4]])-1, function(x,y){ paste0("fields[",y,"]=",x) })%>%
-          paste0(collapse = "&")%>%
-          paste0(filter)
-
+    paste0(collapse = "&")%>%
+    paste0(filter)
+  
   ## Looking wether the time filter is applied and changing the endpoint url accordingly
   endpoint_url<-if_else(is.null(from) | endpoint[[2]]==FALSE,
                         #FALSE - without filter
                         endpoint[[1]]%>%paste0("?",fields),
                         #TRUE - with time filter
                         paste0(endpoint[[1]],"?filter[0][field]=",endpoint[[2]],"&filter[0][operator]=gte&filter[0][value]=",from)%>%
-                        paste0("&",fields))
-
+                          paste0("&",fields))
+  
   ## Filtering example /api/v6/contacts.json?filter[field]=Time&filter[operator]=gte&filter[value]=2018-01-01&fields[0]=ticket
-
+  
   #create the endpoint url
   call<-paste0(url,endpoint_url)
-
+  
   #get the size of the list
   total<-GET(call,query=list(accessToken=token,skip=0,take=1))%>%
     content("text",encoding = "UTF-8")%>%fromJSON(flatten=TRUE,simplifyDataFrame = FALSE)%>%.$result%>%.$total
-
+  
   #continue only if size of the list >0
   if(total<1){
     write(paste0("Report ",endpoint[[3]], " is empty for selected criteria "), stderr())
@@ -133,12 +133,12 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
     res<-setNames(data.frame(matrix(ncol = length(endpoint[[4]]) , nrow = 0)), endpoint[[4]])
     #If i = 0 then initialize the file else append the csv using fwrite from data.table in order to not waste RAM
     fwrite(res,paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"),append = FALSE, sep=",", sep2=c("{","|","}"))
-
+    
   } else {
-
+    
     #creating a sequence reflecting pagination limits
-   i=seq(0,total,by = limit)
-
+    i=seq(0,total,by = limit)
+    
     rows_fetched<-map(i,function(i){
       #Call the api
       tryCatch(
@@ -149,19 +149,21 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
             #Use the parse function
             fromJSON(flatten = TRUE, simplifyDataFrame = TRUE) %>%
             .$result%>%.$data%>%as_data_frame%>%sanitize(endpoint[[4]],endpoint[[3]])
-
+          
           #If i = 0 then initialize the file else append the csv using fwrite from data.table in order to not waste RAM
-          fwrite(res,paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"),append = ifelse(i>0,TRUE,FALSE), sep=",", sep2=c("{","|","}"))
-
+          fwrite(res,paste0("data/out/tables/",prefix,endpoint[[3]],".csv"),append = ifelse(i>0,TRUE,FALSE), sep=",", sep2=c("{","|","}"))
+          
           cnt<-nrow(res) },
         error=function(e){print(paste0("iteration: ",as.integer(i)%>%as.character, "failed. Error: ",message(e))); return(0)})
-
+      
     })%>%unlist%>%as.numeric%>%sum()
+    
+  }
   
   #Writing a message to the console
   b<-Sys.time()
   write(paste0("Task ",endpoint[[3]],": ",rows_fetched ,"/",total," records extracted, task duration: ",time<-round(difftime(b,a,units="secs")%>%as.numeric,2)," s"), stdout())
-
+  
 #--------------------------------------------------addition for Keboola extractor------------------
     if (endpoint[[3]]=="activitiesCall") {
            app$writeTableManifest(paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"),destination='', primaryKey='',incremental=TRUE)
@@ -172,28 +174,25 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
            app$writeTableManifest(paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"),destination='', primaryKey=c('item_name
 '),incremental=TRUE)
     	}
-#     else {
- #         app$writeTableManifest(paste0("/data/out/tables/",endpoint[[3]],".csv"),destination='', primaryKey='',incremental= FALSE)
-#         }
 #---------------------------------------------------------------------------------
-
   #Process log info
   ## Check if out_log.csv exists
-  logfile_created<-file.exists(paste0("/data/out/tables/",prefix,"log.csv"))
-
+  logfile_created<-file.exists("/data/out/tables/out_log.csv")
+  
   log<-data_frame("date"=Sys.time(),"endpoint"=endpoint[[3]],"exported_records"=total,"extraction_time"=time)
   fwrite(log,paste0("/data/out/tables/",prefix,"log.csv"),append=logfile_created)
 }
-  app$writeTableManifest(paste0("/data/out/tables/",prefix,"log.csv"),destination='', primaryKey=c('date','endpoint'), incremental=TRUE)
+  
+app$writeTableManifest(paste0("/data/out/tables/",prefix,"log.csv"),destination='', primaryKey=c('date','endpoint'), incremental=TRUE)
 }
-  # ## Accounts) ------------------------------------------------------------
+# ## Accounts) ------------------------------------------------------------
 
 names_accounts<-c( key="name",
-                  "title",
-                  "survey",
-                  "description",
-                  "deleted"
-                  )
+                   "title",
+                   "survey",
+                   "description",
+                   "deleted"
+)
 
 accounts<-list("/api/v6/accounts.json",FALSE,"accounts",names_accounts,FALSE)
 
@@ -202,13 +201,13 @@ write_endpoint(accounts,token,from = from)
 # ## Users) ------------------------------------------------------------
 
 names_users<-c( key="name",
-               "title",
-               "description",
-               "algo",
-               "email",
-               "nps_score",
-               "backoffice_user",
-               "deleted" )
+                "title",
+                "description",
+                "algo",
+                "email",
+                "nps_score",
+                "backoffice_user",
+                "deleted" )
 
 users<-list("/api/v6/users.json",FALSE,"users",names_users,FALSE)
 
@@ -284,7 +283,7 @@ names_templates<-c(key="name",
                    "content",
                    "deleted",
                    "id_template"
-                   )
+)
 
 templates<-list("/api/v6/templates.json",FALSE,"templates",names_templates,FALSE)
 
@@ -333,6 +332,7 @@ names_activities <-
     key="ticket.name",
     key="queue.name",
     key="user.name",
+    key="status.name",
     key="contact.name",
     "title",
     "action",
@@ -361,6 +361,7 @@ write_endpoint(activities,token,from = from)
 names_activitiesCall <-
   c(
     key="name",
+    key="queue.name",
     "time",
     key="item.id_call" ,
     "item.call_time",
@@ -393,6 +394,7 @@ write_endpoint(activitiesCall,token,from = from)
 
 names_activitiesEmail <-
   c(key="name",
+    key="queue.name",
     "time",
     key="item.name",
     "item.address",
@@ -414,6 +416,7 @@ write_endpoint(activitiesEmail,token,from = from)
 names_activitiesChat <-
   c(
     key="name",
+    key="queue.name",
     "time",
     "item.title",
     "item.email",
