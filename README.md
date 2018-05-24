@@ -1,14 +1,17 @@
 # Keboola Daktela Extraktor
-Daktela je cloudové řešení ústředny a CRM systému pro Call Centra. 
-Etraktor se řídí  dle dokumentace podle [Daktela API V6](https://www.daktela.com/api/v6/). 
 
-**Application input:**
+Daktela kontaktní centrum je cloudové řešení callcentra s nativní podporou mnoha komunikačních kanálů "OmniChannel" v jedné webové aplikaci - telefon, email s helpdeskem, webový chat, SMS a sociální sítě.
+
+Extraktor se řídí  dle dokumentace podle [Daktela API V6](https://www.daktela.com/api/v6/). 
+________________________________________________________________________________________
+
+**Aplikační vstupy:**
 
 - Daktela user account & password
 - Start period specification
 - Extractor Backend (Sequential, Parallel)
 
-**This component allows you to extract:**
+**Výstupy:**
 
 1. Activities
 2. ActivitiesCall
@@ -19,9 +22,13 @@ Etraktor se řídí  dle dokumentace podle [Daktela API V6](https://www.daktela.
 7. Pauses
 8. Queues
 9. Statuses
-10.Templates
-11.Tickets
+10. Templates
+11. Tickets
 
+**Inkrementální load:**
+Extraktor ukládá data inkrementálně na storage. 
+Primary kery pro většinu tabulek je atribut name vyjímkou jsou položy Activities (Calls, Emails, Chats etc. ), kde je nutné využívat složeného primárního klíče activity_name a item_name, pole unique_id je hash těchto dvou hodnot. 
+________________________________________________________________________________________
 ## Backend issues.
 * Skript je napsaný v R 
 * Používá knihovny zejména Tidyverse. 
@@ -36,7 +43,7 @@ Etraktor se řídí  dle dokumentace podle [Daktela API V6](https://www.daktela.
 * Daktela občas vrací aktivitu např. email bez itemu takže aktivita type "Call" Může mít k sobě záznam kde ID_Call je null Skript tyto aktivity maže. 
 * Skript omezuje data na záznamy které jsou staré alespoň 30 min aby se zamezilo importu neuzavřených záznamů.
 
-## transformace dat
+## Transformace dat
 * Skript automaticky prefixuje názvy tabulek a indexy tak aby obsahovaly jméno ústředny.
 * Tabulky digital engines se budou jmenovat digitalengines_activities
 * Indexy jako name v tabulce activities budou upraveny na digitalengines_unikatní_id kvůli deduplikaci indexů při sloučení dat v ústředně. 
