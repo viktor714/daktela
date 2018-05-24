@@ -1,12 +1,5 @@
-FROM quay.io/keboola/docker-custom-r:1.5.2
+FROM quay.io/keboola/docker-custom-r:latest
 
-WORKDIR /home
-
-# Initialize the transformation runner
-COPY . /home/
-
-# Install some commonly used R packages and the R application
-RUN Rscript ./init.R
-
-# Run the application
-ENTRYPOINT Rscript ./main.R /data/
+COPY . /code/
+WORKDIR /code/
+CMD ["Rscript", "/code/main.R"]

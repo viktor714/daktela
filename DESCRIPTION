@@ -1,19 +1,16 @@
-Package: Keboola.Daktela.extractor
+Package: my.component
 Type: Package
-Title: Keboola extractor
+Title: Some Title
 Version: 0.0.1
-Date: 2018-02-12
-Author: Revolt BI
-Maintainer: GG <giuliano@revolt.bi>
-Depends:
-    httr,
-    data.table,
-    dplyr,
-    xml2,
-    purrr,
-    jsonlite,
-    readr,
-    doParallel,
-    keboola.r.application
-Description: API extractor for Keboola.
+Date: 2016-05-02
+Author: Me
+Maintainer: Me <me@example.com>
+Description: Some Description
 License: MIT + file LICENSE
+LazyData: TRUE
+Suggests:
+    testthat
+Depends:
+    methods,
+    keboola.r.docker.application
+RoxygenNote: 5.0.1
