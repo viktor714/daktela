@@ -2,6 +2,26 @@
 Daktela je cloudové řešení ústředny a CRM systému pro Call Centra. 
 Etraktor se řídí  dle dokumentace podle [Daktela API V6](https://www.daktela.com/api/v6/). 
 
+**Application input:**
+
+- Daktela user account & password
+- Start period specification
+- Extractor Backend (Sequential, Parallel)
+
+**This component allows you to extract:**
+
+1. Activities
+2. ActivitiesCall
+3. ActivitiesEmail
+4. ActivitiesChat
+5. Accounts
+6. Groups
+7. Pauses
+8. Queues
+9. Statuses
+10.Templates
+11.Tickets
+
 ## Backend issues.
 * Skript je napsaný v R 
 * Používá knihovny zejména Tidyverse. 
