@@ -1,5 +1,6 @@
 # Keboola Daktela Extraktor
-Řídí se dle dokumentace podle [Daktela API V6](https://www.daktela.com/api/v6/). 
+Daktela je cloudové řešení ústředny a CRM systému pro Call Centra. 
+Etraktor se řídí  dle dokumentace podle [Daktela API V6](https://www.daktela.com/api/v6/). 
 
 ## Backend issues.
 * Skript je napsaný v R 
