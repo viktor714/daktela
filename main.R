@@ -40,7 +40,7 @@ server<-app$getParameters()$'server'
 ## The date
 days_past<-app$getParameters()$from
 ## Incremental load
-increment<-app$getParameters()$incremental
+incremental<-app$getParameters()$incremental
 ## use this attribute in development to see progress bars from furrr
 progress_bars<-F
 ## this attribute sets multicore usage sequential is default other options are multicore and multisession
@@ -221,7 +221,10 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
   fwrite(log,paste0("data/out/tables/",prefix,"log.csv"),append=logfile_created)
   
   #Writes the manifest file
-  app$writeTableManifest(paste0("data/out/tables/",prefix,endpoint[[3]],".csv"), primaryKey = endpoint[[4]][names(endpoint[[4]]) %in% c("primary_key","secondary_key")])
+  if(logfile_created) app$writeTableManifest(paste0("data/out/tables/",prefix,"log.csv"), primaryKey = c("date","endpoint"),incremental = T)
+  
+    
+  app$writeTableManifest(paste0("data/out/tables/",prefix,endpoint[[3]],".csv"), primaryKey = endpoint[[4]][names(endpoint[[4]]) %in% c("primary_key","secondary_key")],incremental = incremental)
   
 }
 
