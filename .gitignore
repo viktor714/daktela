@@ -1,4 +1,2 @@
-/tests/config.R
-.Rproj.user
-/.Rhistory
-/.idea
+/vendor
+/data

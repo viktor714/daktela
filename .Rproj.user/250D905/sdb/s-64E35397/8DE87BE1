@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "#' Example custom KBC application in R\n#' @import methods\n#' @import keboola.r.docker.application\n#' @export CustomApplicationExample\n#' @exportClass CustomApplicationExample\nCustomApplicationExample <- setRefClass(\n    'CustomApplicationExample',\n    contains = c(\"DockerApplication\"),\n    fields = list(),\n    methods = list(\n        run = function() {\n            \"Main application run function.\"\n\n            # intialize application\n            readConfig()\n\n            # read input\n            data <- read.csv(file = file.path(dataDir, \"in/tables/source.csv\"));\n\n            # do something clever\n            data['double_number'] <- data['number'] * getParameters()$multiplier\n\n            # write output\n            write.csv(data, file = file.path(dataDir, \"out/tables/result.csv\"), row.names = FALSE)\n        }\n    )\n)\n",
+    "created" : 1527156360923.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "518229933",
+    "id" : "8DE87BE1",
+    "lastKnownWriteTime" : 1527155098,
+    "last_content_update" : 1527156512968,
+    "path" : "~/Documents/Scripts/KBC_Daktela_Extraktor/R/myApp.R",
+    "project_path" : "R/myApp.R",
+    "properties" : {
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

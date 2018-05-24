@@ -8,4 +8,4 @@ devtools::install_github("cloudyr/aws.signature")
 
 # install really required packages
 withCallingHandlers(install.packages(
-    c('ff')), warning = function(w) stop(w))
+    c('furrr')), warning = function(w) stop(w))

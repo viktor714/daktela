@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "library('devtools')\n\n# install the transformation application ancestors\ndevtools::install_github('keboola/r-application', ref = \"master\", force = TRUE)\ndevtools::install_github('keboola/r-docker-application', ref = \"master\", force = TRUE)\ndevtools::install_github(\"keboola/sapi-r-client\", ref = \"master\", force = TRUE)\ndevtools::install_github(\"cloudyr/aws.signature\")\n\n# install really required packages\nwithCallingHandlers(install.packages(\n    c('furrr')), warning = function(w) stop(w))\n",
+    "created" : 1527155680244.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "677898988",
+    "id" : "D256593E",
+    "lastKnownWriteTime" : 1527155724,
+    "last_content_update" : 1527155724873,
+    "path" : "~/Documents/Scripts/KBC_Daktela_Extraktor/init.R",
+    "project_path" : "init.R",
+    "properties" : {
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
