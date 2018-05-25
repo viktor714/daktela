@@ -7,6 +7,5 @@ devtools::install_github("keboola/sapi-r-client", ref = "master", force = TRUE)
 devtools::install_github("cloudyr/aws.signature")
 
 # install really required packages
+withCallingHandlers(install.packages("future" , force = TRUE), warning = function(w) stop(w))
 withCallingHandlers(devtools::install_github("DavisVaughan/furrr", force = TRUE),warning = function(w) stop(w))
-
-#withCallingHandlers(install.packages( c('furrr')), warning = function(w) stop(w))
