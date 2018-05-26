@@ -1,16 +1,16 @@
-sudo: required
 language: bash
+
 services:
   - docker
-before_script:
-  - export APP_IMAGE=keboola-component
-  - docker build . --tag=$APP_IMAGE
-after_success:
-  - docker images
+
+script:
+  - docker build --tag=${APP_IMAGE} .
+
 deploy:
   provider: script
   skip_cleanup: true
-  script: ./deploy.sh
+  script: chmod +x ./deploy.sh && ./deploy.sh
   on:
     tags: true
+    all_branches: true
 
