@@ -1,5 +1,5 @@
 # Packages ---------------------------------------------------------------
-suppressPackageStartupMessages(install.packages("furrr"))
+devtools::install_github("DavisVaughan/furrr")
 
 # Libraries ---------------------------------------------------------------
 
