@@ -1,5 +1,5 @@
 # Packages ---------------------------------------------------------------
-suppressPackageStartupMessages(install.packages("ggplot2"))
+suppressPackageStartupMessages(install.packages("furrr"))
 
 # Libraries ---------------------------------------------------------------
 
