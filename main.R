@@ -1,3 +1,6 @@
+# Packages ---------------------------------------------------------------
+suppressPackageStartupMessages(install.packages("ggplot2"))
+
 # Libraries ---------------------------------------------------------------
 
 ## API calls with R
