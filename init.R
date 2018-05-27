@@ -1,8 +1,7 @@
 # install really required packages
 withCallingHandlers(install.packages(
-    c('devtools'), 
-    lib = "/usr/local/lib/R/site-library/",
-    dependencies = c("globals", "listenv", "future")), warning = function(w) stop(w))
+    c('devtools', 'future'), 
+    lib = "/usr/local/lib/R/site-library/", warning = function(w) stop(w))
 
 # install the R application
 devtools::install_github('keboola/r-docker-application', ref = "2.0.2")
