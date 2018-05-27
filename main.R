@@ -1,5 +1,5 @@
 # Packages ---------------------------------------------------------------
-devtools::install_github("DavisVaughan/furrr", ref = "master", force = TRUE)
+install_github('DavisVaughan/furrr', ref = 'master')
 
 # Libraries ---------------------------------------------------------------
 
