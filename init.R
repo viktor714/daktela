@@ -1,6 +1,6 @@
 # install really required packages
 withCallingHandlers(install.packages(
-    c('furr', 'devtools'), 
+    c('furrr', 'devtools'), 
     lib = "/usr/local/lib/R/site-library/",
     dependencies = c("globals", "listenv", "future")), warning = function(w) stop(w))
 
