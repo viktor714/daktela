@@ -1,4 +1,4 @@
-FROM quay.io/keboola/docker-custom-r:1.5.2
+FROM rocker/r-ver:3.4.3
 
 WORKDIR /home
 
