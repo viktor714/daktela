@@ -6,7 +6,7 @@ ENV R_HOME /usr/local/lib/R
 WORKDIR /tmp
 
 # Install dependencies for packages
-RUN     RUN apt-get update \
+RUN  apt-get update \
     && apt-get install -y --no-install-recommends \
         curl \
     && rm -rf /var/lib/apt/lists/*
