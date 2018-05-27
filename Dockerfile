@@ -29,9 +29,10 @@ RUN apt-get update \
     
 # Initialize the transformation runner
 COPY . /tmp/
+COPY main.R /tmp/main.R
 
 # Install some commonly used R packages and the R application
 RUN Rscript ./init.R
 
 # Run the application
-ENTRYPOINT Rscript /tmp/main.R /data/
+ENTRYPOINT /usr/local/lib/R/bin/Rscript /tmp/main.R 
