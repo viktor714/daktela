@@ -34,4 +34,4 @@ COPY . /tmp/
 RUN Rscript ./init.R
 
 # Run the application
-ENTRYPOINT Rscript ./main.R /data/
+ENTRYPOINT Rscript /tmp/main.R /data/
