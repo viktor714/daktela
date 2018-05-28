@@ -1,6 +1,6 @@
 # install really required packages
 withCallingHandlers(install.packages(
-    c('devtools','future','dplyr'), 
+    c('devtools','future','dplyr','data.table'), 
     lib = "/usr/local/lib/R/site-library/"), warning = function(w) stop(w))
 
 # install the R application
