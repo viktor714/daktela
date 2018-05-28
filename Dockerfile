@@ -1,8 +1,5 @@
 FROM rocker/r-ver:3.4.3
 
-ENV PATH /usr/local/lib/R/bin/:$PATH
-ENV R_HOME /usr/local/lib/R
-
 WORKDIR /tmp
 
 # Install dependencies for packages
@@ -29,10 +26,9 @@ RUN apt-get update \
     
 # Initialize the transformation runner
 COPY . /tmp/
-COPY main.R /tmp/main.R
 
 # Install some commonly used R packages and the R application
 RUN Rscript ./init.R
 
 # Run the application
-ENTRYPOINT /usr/local/lib/R/bin/Rscript /tmp/main.R 
+ENTRYPOINT Rscript ./main.R
