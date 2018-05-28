@@ -1,6 +1,6 @@
 FROM rocker/r-ver:3.4.3
 
-WORKDIR /tmp
+WORKDIR /home
 
 # Install dependencies for packages
 RUN apt-get update \
@@ -25,7 +25,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
     
 # Initialize the transformation runner
-COPY . /tmp/
+COPY . /home/
 
 # Install some commonly used R packages and the R application
 RUN Rscript ./init.R
