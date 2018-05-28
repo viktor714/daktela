@@ -7,4 +7,4 @@ withCallingHandlers(install.packages(
 devtools::install_github('keboola/r-docker-application', ref = "2.0.2")
 devtools::install_github('keboola/r-application', ref = "master", force = TRUE)
 devtools::install_github('DavisVaughan/furrr', ref = "master", force = TRUE) 
-
+devtools::install_github('hadley/dplyr', ref = "master", force = TRUE)
