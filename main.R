@@ -223,7 +223,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
 if(logfile_created) app$writeTableManifest(paste0("/data/out/tables/",prefix,"log.csv"), primaryKey = c("date","endpoint"),incremental = TRUE)
   
     
-app$writeTableManifest(paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"), primaryKey = endpoint[[4]][names(endpoint[[4]]) %in% c("primary_key",paste("activities_",secondary_key))],incremental = TRUE)
+app$writeTableManifest(paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"), primaryKey = endpoint[[4]][names(endpoint[[4]]) %in% c("primary_key",paste("activities_","secondary_key"))],incremental = TRUE)
   
 }
 
