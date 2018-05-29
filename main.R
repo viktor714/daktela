@@ -40,8 +40,6 @@ pwd<-app$getParameters()$'#pwd'
 server<-app$getParameters()$'server'
 ## The date
 days_past<-app$getParameters()$from
-## Incremental load
-incremental<-app$getParameters()$incremental
 ## use this attribute in development to see progress bars from furrr
 progress_bars<-F
 ## this attribute sets multicore usage sequential is default other options are multicore and multisession
