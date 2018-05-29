@@ -181,7 +181,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
     rows_fetched<-0
     res<-setNames(data.frame(matrix(ncol = length(endpoint[[4]]) , nrow = 0)), endpoint[[4]])
     #If i = 0 then initialize the file else append the csv using fwrite from data.table in order to not waste RAM
-    fwrite(res,paste0("data/out/tables/",prefix,endpoint[[3]],".csv"),append = FALSE, sep=",", sep2=c("{","|","}"))
+    fwrite(res,paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"),append = FALSE, sep=",", sep2=c("{","|","}"))
     
   } else {
     
@@ -201,7 +201,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
             .$result%>%.$data%>%as_data_frame%>%sanitize(endpoint[[4]],endpoint[[3]])
           
           #If i = 0 then initialize the file else append the csv using fwrite from data.table in order to not waste RAM
-          fwrite(res,paste0("data/out/tables/",prefix,endpoint[[3]],".csv"),append = ifelse(i>0,TRUE,FALSE), sep=",", sep2=c("{","|","}"))
+          fwrite(res,paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"),append = ifelse(i>0,TRUE,FALSE), sep=",", sep2=c("{","|","}"))
           
           cnt<-nrow(res) },
         error=function(e){print(paste0("iteration: ",as.integer(i)%>%as.character, "failed. Error: ",message(e))); return(0)})
@@ -216,16 +216,16 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
   
   #Process log info
   ## Check if out_log.csv exists
-  logfile_created<-file.exists("data/out/tables/out_log.csv")
+  logfile_created<-file.exists("/data/out/tables/out_log.csv")
   
   log<-data_frame("date"=Sys.time(),"endpoint"=endpoint[[3]],"exported_records"=total,"extraction_time"=time, "call"=call)
-  fwrite(log,paste0("data/out/tables/",prefix,"log.csv"),append=logfile_created)
+  fwrite(log,paste0("/data/out/tables/",prefix,"log.csv"),append=logfile_created)
   
   #Writes the manifest file
-  if(logfile_created) app$writeTableManifest(paste0("data/out/tables/",prefix,"log.csv"), primaryKey = c("date","endpoint"),incremental = T)
+  if(logfile_created) app$writeTableManifest(paste0("/data/out/tables/",prefix,"log.csv"), primaryKey = c("date","endpoint"),incremental = T)
   
     
-  app$writeTableManifest(paste0("data/out/tables/",prefix,endpoint[[3]],".csv"), primaryKey = endpoint[[4]][names(endpoint[[4]]) %in% c("primary_key","secondary_key")],incremental = incremental)
+  app$writeTableManifest(paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"), primaryKey = endpoint[[4]][names(endpoint[[4]]) %in% c("primary_key","secondary_key")],incremental = incremental)
   
 }
 
