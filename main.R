@@ -223,7 +223,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
 if(logfile_created) app$writeTableManifest(paste0("/data/out/tables/",prefix,"log.csv"), primaryKey = c("date","endpoint"),incremental = TRUE)
   
     
-app$writeTableManifest(paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"), primaryKey = endpoint[[4]][names(endpoint[[4]]) %in% c("primary_key","secondary_key")],incremental = TRUE)
+app$writeTableManifest(paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"), primaryKey = endpoint[[4]][names(endpoint[[4]]) %in% c("primary_key",paste("activities_",secondary_key))],incremental = TRUE)
   
 }
 
@@ -373,7 +373,7 @@ write("Rows with missing primary keys will be deleted in the process which can c
 ## ActivitiesCall
 names_activitiesCall <-
   c(
-    secondary_key="activities_name",
+    secondary_key="name",
     key="queue.name",
     "time",
     primary_key="item_id_call" ,
@@ -406,7 +406,7 @@ write_endpoint(activitiesCall,token,from = from)
 ## ActivitiesEmail
 
 names_activitiesEmail <-
-  c(secondary_key="activities_name",
+  c(secondary_key="name",
     key="queue_name",
     "time",
     primary_key="item_name",
@@ -428,7 +428,7 @@ write_endpoint(activitiesEmail,token,from = from)
 ## ActivitiesChat
 names_activitiesChat <-
   c(
-    secondary_key="activities_name",
+    secondary_key="name",
     key="queue_name",
     "time",
     "item.title",
