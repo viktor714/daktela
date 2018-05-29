@@ -220,10 +220,10 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
   fwrite(log,paste0("/data/out/tables/",prefix,"log.csv"),append=logfile_created)
   
   #Writes the manifest file
-  #if(logfile_created) app$writeTableManifest(paste0("/data/out/tables/",prefix,"log.csv"), primaryKey = c("date","endpoint"),incremental = TRUE)
+  if(logfile_created) app$writeTableManifest(paste0("/data/out/tables/",prefix,"log.csv"), primaryKey = c("date","endpoint"),incremental = TRUE)
   
     
- #app$writeTableManifest(paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"), primaryKey = endpoint[[4]][names(endpoint[[4]]) %in% c("primary_key","secondary_key")],incremental = TRUE)
+ app$writeTableManifest(paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"), primaryKey = endpoint[[4]][names(endpoint[[4]]) %in% c("primary_key","secondary_key")],incremental = TRUE)
   
 }
 
@@ -376,12 +376,12 @@ names_activitiesCall <-
     secondary_key="name",
     key="queue.name",
     "time",
-    primary_key="item.id_call" ,
+    primary_key="item_id_call" ,
     "item.call_time",
     "item.direction",
     "item.answered",
     "item.clid",
-    key="item.prefix_clid_name",
+    key="item_prefix_clid_name",
     "item.did",
     "item.waiting_time",
     "item.ringing_time",
@@ -407,9 +407,9 @@ write_endpoint(activitiesCall,token,from = from)
 
 names_activitiesEmail <-
   c(secondary_key="name",
-    key="queue.name",
+    key="queue_name",
     "time",
-    primary_key="item.name",
+    primary_key="item_name",
     "item.address",
     "item.direction",
     "item.wait_time",
@@ -429,7 +429,7 @@ write_endpoint(activitiesEmail,token,from = from)
 names_activitiesChat <-
   c(
     secondary_key="name",
-    key="queue.name",
+    key="queue_name",
     "time",
     "item.title",
     "item.email",
@@ -438,7 +438,7 @@ names_activitiesChat <-
     "item.answered",
     "item.disconnection",
     "item.time",
-    primary_key="item.name",
+    primary_key="item_name",
     "item.ip",
     "item.country_code",
     "item.country_name",
@@ -465,11 +465,11 @@ write_endpoint(activitiesChat,token,from = from)
 names_activities <-
   c(primary_key="name",
     "time",
-    key="ticket.name",
-    key="queue.name",
-    key="user.name",
-    key="status.name",
-    key="contact.name",
+    key="ticket_name",
+    key="queue_name",
+    key="user_name",
+    key="status_name",
+    key="contact_name",
     "record.customFields.hodnoceni",
     "record.customFields.operator",
     "record.customFields.id_hovoru",
