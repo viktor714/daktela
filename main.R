@@ -373,7 +373,7 @@ write("Rows with missing primary keys will be deleted in the process which can c
 ## ActivitiesCall
 names_activitiesCall <-
   c(
-    secondary_key="name",
+    secondary_key="activities_name",
     key="queue.name",
     "time",
     primary_key="item_id_call" ,
@@ -406,7 +406,7 @@ write_endpoint(activitiesCall,token,from = from)
 ## ActivitiesEmail
 
 names_activitiesEmail <-
-  c(secondary_key="name",
+  c(secondary_key="activities_name",
     key="queue_name",
     "time",
     primary_key="item_name",
@@ -428,7 +428,7 @@ write_endpoint(activitiesEmail,token,from = from)
 ## ActivitiesChat
 names_activitiesChat <-
   c(
-    secondary_key="name",
+    secondary_key="activities_name",
     key="queue_name",
     "time",
     "item.title",
