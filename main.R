@@ -118,7 +118,7 @@ sanitize<-function(res,names_unique,df_name){
   
   #renames the name to activity_name in case of the activities_item tables
   if(df_name %in% c("activitiesChat","activitiesEmail","activitiesCall")){ res<-res%>%rename(activities_name=name)}
-  if(df_name %in% c("activitiesChat","activitiesEmail","activitiesCall")){ secondary_key<-paste("activites_",secondary_key)}
+
   res
   
 }
