@@ -44,6 +44,8 @@ days_past<-app$getParameters()$from
 progress_bars<-F
 ## this attribute sets multicore usage sequential is default other options are multicore and multisession
 plan<-app$getParameters()$plan
+## Incremental load
+#incremental<-app$getParameters()$incr
 
 # Init --------------------------------------------------------------------
 
