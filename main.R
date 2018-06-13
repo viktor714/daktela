@@ -43,7 +43,9 @@ progress_bars<-F
 ## this attribute sets multicore usage sequential is default other options are multicore and multisession
 plan<-app$getParameters()$plan
 ## Incremental load
-incr_load<-app$getParameters()$incr
+#incr_load<-app$getParameters()$incr
+##TRUE increment by default ... to test EOF error
+incr_load<-TRUE
 ## Destination bucket selection
 #bucket<-app$getParameters()$destination
 
