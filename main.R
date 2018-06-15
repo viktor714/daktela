@@ -187,10 +187,10 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
     rows_fetched<-0
     res<-setNames(data.frame(matrix(ncol = length(endpoint[[4]]) , nrow = 0)), endpoint[[4]])
     #If i = 0 then initialize the file else append the csv using fwrite from data.table in order to not waste RAM
-    #fwrite(res,paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"),append = FALSE, sep=",", sep2=c("{","|","}"))
+    fwrite(res,paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"),append = FALSE, sep=",", sep2=c("{","|","}"))
     
-    csvFileName<-paste0("/data/out/tables/",prefix,endpoint[[3]],".csv")
-    write.csv(res,file=csvFileName,row.names = FALSE)
+    #csvFileName<-paste0("/data/out/tables/",prefix,endpoint[[3]],".csv")
+    #write.csv(res,file=csvFileName,row.names = FALSE)
     
   } else {
     
@@ -210,10 +210,10 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
             .$result%>%.$data%>%as_data_frame%>%sanitize(endpoint[[4]],endpoint[[3]])
           
           #If i = 0 then initialize the file else append the csv using fwrite from data.table in order to not waste RAM
-          #fwrite(res,paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"),append = ifelse(i>0,TRUE,FALSE), sep=",", sep2=c("{","|","}"))
+          fwrite(res,paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"),append = ifelse(i>0,TRUE,FALSE), sep=",", sep2=c("{","|","}"))
           
-          csvFileName<-paste0("/data/out/tables/",prefix,endpoint[[3]],".csv")
-          write.csv(res,file=csvFileName,row.names = FALSE)
+          #csvFileName<-paste0("/data/out/tables/",prefix,endpoint[[3]],".csv")
+          #write.csv(res,file=csvFileName,row.names = FALSE)
           
           cnt<-nrow(res) },
         error=function(e){print(paste0("iteration: ",as.integer(i)%>%as.character, "failed. Error: ",message(e))); return(0)})
@@ -242,7 +242,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
   if(logfile_created) app$writeTableManifest(paste0("/data/out/tables/",prefix,"log.csv"), primaryKey = c("date","endpoint"),incremental = incr_load,destination="in.c-DaktelaTest")
   
   
-  app$writeTableManifest(paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"), primaryKey = endpoint[[4]][names(endpoint[[4]]) %in% c("primary_key","secondary_key")]%>%str_replace_all("\\.","_"),incremental = incr_load, destination="in.c-DaktelaTest")
+  #app$writeTableManifest(paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"), primaryKey = endpoint[[4]][names(endpoint[[4]]) %in% c("primary_key","secondary_key")]%>%str_replace_all("\\.","_"),incremental = incr_load, destination="in.c-DaktelaTest")
   
 }
 
