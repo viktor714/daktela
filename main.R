@@ -50,7 +50,7 @@ increment<-app$getParameters()$incr
 
 # Init --------------------------------------------------------------------
 
-if(increment="1") {incr_load==TRUE} else {incr_load==FALSE}
+if(increment=="1") {incr_load<-TRUE} else {incr_load<-FALSE}
 
 if(plan=="sequential" || is.null(plan)){plan(sequential)}else{plan(multisession)}
 
