@@ -24,6 +24,8 @@ suppressPackageStartupMessages(library(furrr, quietly = TRUE))
 
 # Input config ------------------------------------------------------------
 
+# send out messages from console(eg.TRUE) 
+sink("msg")
 ## initialize keboola application this saves all user inputs from the extractor to variables
 library('keboola.r.docker.application')
 app <- DockerApplication$new('/data/')
@@ -49,6 +51,9 @@ increment<-app$getParameters()$incr
 ## Destination bucket selection
 #bucket<-app$getParameters()$destination
 
+tryCatch(
+    { sink(NULL)},
+    warning = function(w) {})	
 
 # Init --------------------------------------------------------------------
 
@@ -224,7 +229,11 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
     },.progress = progress_bars)%>%unlist%>%as.numeric%>%sum()
     
   }
-  sink(NULL)
+  
+  tryCatch(
+    { sink(NULL)},
+    warning = function(w) {})
+  
   #Writing a message to the console
   b<-Sys.time()
   write(paste0("Task ",endpoint[[3]],": ",rows_fetched ,"/",total," records extracted, task duration: ",time<-round(difftime(b,a,units="secs")%>%as.numeric,2)," s"), stdout())
@@ -250,7 +259,9 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
   
 }
 
-sink(NULL)
+tryCatch(
+    { sink(NULL)},
+    warning = function(w) {})
 
 # ## Accounts) ------------------------------------------------------------
 
