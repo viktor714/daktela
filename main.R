@@ -146,7 +146,8 @@ get_fields<-function(fields){
 #' Parse
 #' Default parser for the JSON response of the Daktela API
 
-
+#wrap write_endpoint function with TryCatch to ingore Warnings
+tryCatch({
 write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
   
   #Record task start time
@@ -247,6 +248,10 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
   app$writeTableManifest(paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"), primaryKey = endpoint[[4]][names(endpoint[[4]]) %in% c("primary_key","secondary_key")]%>%str_replace_all("\\.","_"),incremental = incr_load, destination="in.c-DaktelaTest")
   
 }
+# end of TryCatch
+  },
+    warning = function(w) {}
+)
 
 # ## Accounts) ------------------------------------------------------------
 
