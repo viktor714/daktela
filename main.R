@@ -79,8 +79,6 @@ invalid_activities<-NULL
 
 # Function definition -----------------------------------------------------
 
-#wrap write_endpoint function with TryCatch to ingore Warnings
-tryCatch({
 ## Sanitize - This function makes sure that the results have always the same columns
 sanitize<-function(res,names_unique,df_name){
   missing_cols<-dplyr::setdiff(names_unique,names(res))
@@ -134,12 +132,7 @@ sanitize<-function(res,names_unique,df_name){
   res
   
 }
- ##end tryCatch
-  },
-    warning = function(w) {})
 
-#wrap write_endpoint function with TryCatch to ingore Warnings
-tryCatch({
   
 ## This function takes a field list and converts it to a Daktela API Call
 #?fields[0]=firstname&fields[1]=lastname&fields[2]=account.title
@@ -150,14 +143,11 @@ get_fields<-function(fields){
   string=paste0(elements, collapse = "&")
   
 }
- ##end tryCatch
-  },
-    warning = function(w) {})
 #' Parse
 #' Default parser for the JSON response of the Daktela API
 
-#wrap write_endpoint function with TryCatch to ingore Warnings
-tryCatch({
+# send out messages from console(eg.TRUE)
+sink("msg")
 write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
   
   #Record task start time
@@ -234,11 +224,12 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
     },.progress = progress_bars)%>%unlist%>%as.numeric%>%sum()
     
   }
-  
+  sink(NULL)
   #Writing a message to the console
   b<-Sys.time()
   write(paste0("Task ",endpoint[[3]],": ",rows_fetched ,"/",total," records extracted, task duration: ",time<-round(difftime(b,a,units="secs")%>%as.numeric,2)," s"), stdout())
   
+  sink("msg")
   #Process log info
   ## Check if out_log.csv exists
   logfile_created<-file.exists(paste0("/data/out/tables/",prefix,"log.csv"))
@@ -258,10 +249,8 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
   app$writeTableManifest(paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"), primaryKey = endpoint[[4]][names(endpoint[[4]]) %in% c("primary_key","secondary_key")]%>%str_replace_all("\\.","_"),incremental = incr_load, destination="in.c-DaktelaTest")
   
 }
-# end of TryCatch
-  },
-    warning = function(w) {}
-)
+
+sink(NULL)
 
 # ## Accounts) ------------------------------------------------------------
 
