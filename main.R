@@ -79,6 +79,8 @@ invalid_activities<-NULL
 
 # Function definition -----------------------------------------------------
 
+#wrap write_endpoint function with TryCatch to ingore Warnings
+tryCatch({
 ## Sanitize - This function makes sure that the results have always the same columns
 sanitize<-function(res,names_unique,df_name){
   missing_cols<-dplyr::setdiff(names_unique,names(res))
@@ -132,7 +134,13 @@ sanitize<-function(res,names_unique,df_name){
   res
   
 }
+ ##end tryCatch
+  },
+    warning = function(w) {})
 
+#wrap write_endpoint function with TryCatch to ingore Warnings
+tryCatch({
+  
 ## This function takes a field list and converts it to a Daktela API Call
 #?fields[0]=firstname&fields[1]=lastname&fields[2]=account.title
 
@@ -142,7 +150,9 @@ get_fields<-function(fields){
   string=paste0(elements, collapse = "&")
   
 }
-
+ ##end tryCatch
+  },
+    warning = function(w) {})
 #' Parse
 #' Default parser for the JSON response of the Daktela API
 
