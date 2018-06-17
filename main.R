@@ -41,7 +41,9 @@ days_past<-app$getParameters()$from
 ## use this attribute in development to see progress bars from furrr
 progress_bars<-F
 ## this attribute sets multicore usage sequential is default other options are multicore and multisession
-plan<-app$getParameters()$plan
+## by default as sequential - for stability
+## plan<-app$getParameters()$plan
+plan<-"sequential"
 ## Incremental load
 increment<-app$getParameters()$incr
 ## Destination bucket selection
@@ -52,7 +54,7 @@ increment<-app$getParameters()$incr
 
 if(increment=="1") {incr_load<-TRUE} else {incr_load<-FALSE}
 
-if(plan=="sequential" || is.null(plan)){plan(sequential)}else{plan(multisession)}
+#if(plan=="sequential" || is.null(plan)){plan(sequential)}else{plan(multisession)}
 
 ## Daktela server url
 url<-paste0("https://",server,".daktela.com")
