@@ -73,8 +73,13 @@ days_past<-ifelse(is.null(days_past),1,as.numeric(days_past))
 from<-Sys.Date()-days_past
 to<-with_tz(Sys.time(),"Europe/Prague") - minutes(30)
 
-# Catch login credentials errors
-credentials <- POST(paste0(url,"/api/v6/login.json"),body=list(password=pwd,username=user,only_token=1))
+# Catch config errors
+url_status <- tryCatch(
+  credentials <- POST(paste0(url,"/api/v6/login.json"),body=list(password=pwd,username=user,only_token=1)),
+    error = function(e) e
+  )
+
+if(inherits(url_status,  "error"))  stop("verify server")
 if (credentials$status_code != 200) stop("unauthorized - verify username & password")
 
 ## Retrieve token
