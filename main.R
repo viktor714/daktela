@@ -51,6 +51,13 @@ increment<-app$getParameters()$incr
 ## Destination bucket selection
 #bucket<-app$getParameters()$destination
 
+
+##Catch config errors
+
+if(is.null(user)) stop("enter your username in the user config field")
+if(is.null(pwd)) stop("enter your password in the #password config field")
+if(is.null(server)) stop("enter API server")
+
 tryCatch(
     { sink(NULL)},
     warning = function(w) {})	
