@@ -80,8 +80,6 @@ days_past<-ifelse(is.null(days_past),1,as.numeric(days_past))
 from<-Sys.Date()-days_past
 to<-with_tz(Sys.time(),"Europe/Prague") - minutes(30)
 
-##Catch config errors
-if(is.null(pwd) | is.null(user) | is.null(url) ) stop("invalid credentials or site URL")
 
 ## Retrieve token
 token<-POST(paste0(url,"/api/v6/login.json"),body=list(password=pwd,username=user,only_token=1))%>%
