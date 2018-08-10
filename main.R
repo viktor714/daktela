@@ -90,6 +90,13 @@ invalid_activities<-NULL
 
 # Function definition -----------------------------------------------------
 
+## funciton to clean nested Json / split list values into more columns
+flatten<-function (l) {
+  if (!is.list(l)) return(l)
+  do.call('rbind', lapply(l, function(x) `length<-`(x,8)))
+}
+
+
 ## Sanitize - This function makes sure that the results have always the same columns
 sanitize<-function(res,names_unique,df_name){
   missing_cols<-dplyr::setdiff(names_unique,names(res))
@@ -222,6 +229,19 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
             #Use the parse function
             fromJSON(flatten = TRUE, simplifyDataFrame = TRUE) %>%
             .$result%>%.$data%>%as_data_frame%>%sanitize(endpoint[[4]],endpoint[[3]])
+            
+            if (endpoint[[3]]=="activities")  {
+                      res2<-lapply(res, flatten)
+                      res<-do.call(data.frame,res2)
+                   
+                   #replace NULLs by NAs
+                   res$statuses.V8[res$statuses.V8=="NULL"]<- NA
+                   
+                   #add status.name to the appropriate column
+                   res$status.name<-paste(res$status.name,res$statuses.V8)
+                   res<-res%>%select(activities[[4]])
+                 } 
+                 else {res}    
           
           #If i = 0 then initialize the file else append the csv using fwrite from data.table in order to not waste RAM
           fwrite(res,paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"),append = ifelse(i>0,TRUE,FALSE), sep=",", sep2=c("{","|","}"))
