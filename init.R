@@ -1,4 +1,3 @@
-library('devtools')
 
 withCallingHandlers(install.packages(
     c('devtools','future','dplyr','data.table','readr','tidyr','digest','stringr','lubridate','purrr','httr'), 
