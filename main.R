@@ -546,7 +546,8 @@ names_activities <-
     "time_open",
     "time_close",
     "important",
-    "status"
+    "status",
+    "statuses"
   )
 
 
