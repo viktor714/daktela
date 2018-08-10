@@ -1,6 +1,6 @@
 # install really required packages
 withCallingHandlers(install.packages(
-    c('devtools','future','dplyr','data.table','readr','tidyr','digest','stringr','lubridate','purrr','httr'),  warning = function(w) stop(w))
+    c('devtools','future','dplyr','data.table','readr','tidyr','digest','stringr','lubridate','purrr','httr'),  warning = function(w) stop(w)))
 
 # install the R application
 devtools::install_github('keboola/r-docker-application', ref = "2.0.2")
