@@ -239,7 +239,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
                    
                    #add status.name to the appropriate column
                      res$status.name<-paste(res$status_name,res$statuses.V8)
-                    res<-res%>%select(activities[[4]])
+                    #drop columns with statuses info
                  } 
                   else {res}    
           
