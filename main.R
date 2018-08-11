@@ -238,7 +238,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
                 # v1.9.3 addition  res$statuses.V8[res$statuses.V8=="NULL"]<- NA
                    
                    #add status.name to the appropriate column
-                  # v1.9.3 addition   res$status.name<-paste(res$status_name,res$statuses.V8)
+                  # v1.9.3 addition   res$status_name<-paste(res$status_name,res$statuses.V8)
                     #drop columns with statuses info
                 # v1.9.3 addition } 
                   # v1.9.3 addition  else {res}    
@@ -547,7 +547,7 @@ names_activities <-
     "time_close",
     "important",
     "status"
-    # v1.9.3 addition ,"statuses"
+    v1.9.3 addition ,"statuses"
   )
 
 
