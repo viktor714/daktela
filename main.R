@@ -232,7 +232,8 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
             
             if (endpoint[[3]]=="activities")  {
                       res2<-lapply(res, flatten)
-                     res<-do.call(data.frame,res2)
+                      res<-do.call(data.frame,res2)
+                      res<-res[, sapply(res, class) != "list"]
                    
                    #replace NULLs by NAs
                # v1.9.3 additionres$statuses.name[res$statuses.name=="NULL"]<- NA
