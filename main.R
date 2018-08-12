@@ -235,10 +235,10 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
                      res<-do.call(data.frame,res2)
                    
                    #replace NULLs by NAs
-               res$statuses.name[res$statuses.name=="NULL"]<- NA
+               # v1.9.3 additionres$statuses.name[res$statuses.name=="NULL"]<- NA
                    
                    #add status.name to the appropriate column
-                res$status_name<-paste(res$status_name,res$statuses.name)
+                # v1.9.3 additionres$status_name<-paste(res$status_name,res$statuses.name)
                     #drop columns with statuses info
                 } 
                  else {res}    
