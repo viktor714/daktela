@@ -244,8 +244,8 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
                    #add status.name to the appropriate column
                 res$status_name<-paste(res$status_name,res$statuses.V8)
                     #drop columns with statuses info
-              # v1.9.3 addition  } 
-              # v1.9.3 addition   else {res}    
+                } 
+                 else {res}    
           
           #If i = 0 then initialize the file else append the csv using fwrite from data.table in order to not waste RAM
           fwrite(res,paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"),append = ifelse(i>0,TRUE,FALSE), sep=",", sep2=c("{","|","}"))
