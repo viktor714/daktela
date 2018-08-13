@@ -242,8 +242,9 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
                    
                    #add status.name to the appropriate column
                 res$status_name<-paste(res$status_name,res$statuses.V8)
-                    res<-subset(res, select=-c(statuses.V8))
-                    #drop columns with statuses info
+                   
+                   #drop unused columns
+                    res<-res[,-which(names(res) =="statuses.V8")] 
                 } 
                  else {res}    
           
