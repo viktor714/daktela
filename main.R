@@ -230,19 +230,19 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
             fromJSON(flatten = TRUE, simplifyDataFrame = TRUE) %>%
             .$result%>%.$data%>%as_data_frame%>%sanitize(endpoint[[4]],endpoint[[3]])
             
-            # v1.9.3 addition  if (endpoint[[3]]=="activities")  {
-             # v1.9.3 addition         res2<-lapply(res, flatten)
-             # v1.9.3 addition         res<-do.call(data.frame,res2)
+             if (endpoint[[3]]=="activities")  {
+                  res2<-lapply(res, flatten)
+                  res<-do.call(data.frame,res2)
                    
                    
                    #replace NULLs by NAs
-              # v1.9.3 addition  res[res == "NULL"] = NA
-             # v1.9.3 addition  res$statuses.V8<-unlist(res$statuses.V8) 
-             # v1.9.3 addition  res<-res[, sapply(res, class) != "list"] 
+                res[res == "NULL"] = NA
+                res$statuses.V8<-unlist(res$statuses.V8) 
+                res<-res[, sapply(res, class) != "list"] 
                 
                    
                    #add status.name to the appropriate column
-                # v1.9.3 additionres$status_name<-paste(res$status_name,res$statuses.name)
+                res$status_name<-paste(res$status_name,res$statuses.V8)
                     #drop columns with statuses info
               # v1.9.3 addition  } 
               # v1.9.3 addition   else {res}    
@@ -551,7 +551,7 @@ names_activities <-
     "time_close",
     "important",
     "status"
-     # v1.9.3 addition  ,"statuses"
+     ,"statuses"
   )
 
 
