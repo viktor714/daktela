@@ -238,6 +238,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
                    #replace NULLs by NAs
                 res[res == "NULL"] = NA
                 res$statuses.V8<-unlist(res$statuses.V8) 
+                colnames(res)[23] <- 'statuses_V8'
                 res<-res[, sapply(res, class) != "list"] 
                 
               
