@@ -230,25 +230,26 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
             fromJSON(flatten = TRUE, simplifyDataFrame = TRUE) %>%
             .$result%>%.$data%>%as_data_frame%>%sanitize(endpoint[[4]],endpoint[[3]])
             
-             if (endpoint[[3]]=="activities")  {
-                  res2<-lapply(res, flatten)
-                  res<-do.call(data.frame,res2)
+            res$statuses_V8<-NULL
+             # v1.9.3 addition if (endpoint[[3]]=="activities")  {
+             # v1.9.3 addition     res2<-lapply(res, flatten)
+             # v1.9.3 addition     res<-do.call(data.frame,res2)
                    
                    
-                   #replace NULLs by NAs
-                res[res == "NULL"] = NA
-                res$statuses.V8<-unlist(res$statuses.V8)
+              # v1.9.3 addition     #replace NULLs by NAs
+              # v1.9.3 addition  res[res == "NULL"] = NA
+              # v1.9.3 addition  res$statuses.V8<-unlist(res$statuses.V8)
                
-                 #renames the cols and replaces . by _
-                 names(res)<-str_replace_all(names(res),"\\.","_")
+               # v1.9.3 addition  #renames the cols and replaces . by _
+               # v1.9.3 addition  names(res)<-str_replace_all(names(res),"\\.","_")
                   
-                 res<-res[, sapply(res, class) != "list"] 
+                # v1.9.3 addition res<-res[, sapply(res, class) != "list"] 
                  
-                   #add status.name to the appropriate column
-                   #res$status_name<-paste(res$status_name,res$statuses.V8)
+                # v1.9.3 addition   #add status.name to the appropriate column
+                 # v1.9.3 addition  #res$status_name<-paste(res$status_name,res$statuses.V8)
 
-                } 
-                 else {res}    
+               # v1.9.3 addition } 
+                # v1.9.3 addition else {res}    
           
           #If i = 0 then initialize the file else append the csv using fwrite from data.table in order to not waste RAM
           fwrite(res,paste0("/data/out/tables/",prefix,endpoint[[3]],".csv"),append = ifelse(i>0,TRUE,FALSE), sep=",", sep2=c("{","|","}"))
@@ -554,7 +555,7 @@ names_activities <-
     "time_close",
     "important",
     "status"
-     ,"statuses"
+     # v1.9.3 addition ,"statuses"
   )
 
 
