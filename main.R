@@ -239,7 +239,8 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
                 res[res == "NULL"] = NA
                 res$statuses.V8<-unlist(res$statuses.V8) 
                 res<-res[, sapply(res, class) != "list"] 
-                names(res)<-str_replace_all(names(res),"\\.","_")
+                names(res$statuses.V8)<-"statuses_V8"
+              
                    
                    #add status.name to the appropriate column
                    #res$status_name<-paste(res$status_name,res$statuses.V8)
