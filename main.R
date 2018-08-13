@@ -244,7 +244,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
                 res$status_name<-paste(res$status_name,res$statuses.V8)
                    
                    #drop unused columns
-                    res<-res[,-which(names(res) =="statuses.V8")] 
+                    #res<-res[,-which(names(res) =="statuses.V8")] 
                 } 
                  else {res}    
           
