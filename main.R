@@ -239,10 +239,10 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
                 res[res == "NULL"] = NA
                 res$statuses.V8<-unlist(res$statuses.V8) 
                 res<-res[, sapply(res, class) != "list"] 
-                
                    
                    #add status.name to the appropriate column
                 res$status_name<-paste(res$status_name,res$statuses.V8)
+                    res<-subset(res, select=-c(statuses.V8))
                     #drop columns with statuses info
                 } 
                  else {res}    
