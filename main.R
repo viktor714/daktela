@@ -242,7 +242,7 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
                          if ("statuses.V8" %in% colnames(res))
                             {
                               res$statuses_V8<-unlist(res$statuses.V8)
-                              remove(res$statuses.V8)
+                              res$statuses.V8<- NULL
                             }   
                          else if ("statuses_V8" %in% colnames(res))
                             {
