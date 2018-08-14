@@ -252,9 +252,9 @@ write_endpoint<-function(endpoint,token,from=NULL,limit=1000){
                   
                   res<-res[, sapply(res, class) != "list"] 
                  
-                # v1.9.3 addition   #add status.name to the appropriate column
-                 # v1.9.3 addition  #res$status_name<-paste(res$status_name,res$statuses.V8)
-
+                #add status.name to the appropriate column
+                res$status_name<-paste(res$status_name,res$statuses_V8)
+                res$statuses_V8<- NULL
                 } 
                  else {res}    
           
